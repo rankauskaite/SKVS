@@ -1,7 +1,32 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|c:\\onedrive\\dokumentai\\github\\skvs\\skvs.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|solutionrelative:skvs.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|c:\\onedrive\\dokumentai\\github\\skvs\\skvs.server\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|solutionrelative:skvs.server\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|c:\\onedrive\\dokumentai\\github\\skvs\\skvs.server\\controllers\\truckcompanycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|solutionrelative:skvs.server\\controllers\\truckcompanycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|c:\\onedrive\\dokumentai\\github\\skvs\\skvs.server\\controllers\\svscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|solutionrelative:skvs.server\\controllers\\svscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|c:\\onedrive\\dokumentai\\github\\skvs\\skvs.server\\controllers\\gatecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|solutionrelative:skvs.server\\controllers\\gatecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|c:\\onedrive\\dokumentai\\github\\skvs\\skvs.server\\controllers\\communicationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C2A90D33-E1B1-4AAC-AE02-563D8B151514}|SKVS.Server\\SKVS.Server.csproj|solutionrelative:skvs.server\\controllers\\communicationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,6 +67,84 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Program.cs",
+              "RelativeDocumentMoniker": "SKVS.Server\\Program.cs",
+              "ToolTip": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Program.cs",
+              "RelativeToolTip": "SKVS.Server\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T20:28:30.744Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "SKVS.Server\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\UserController.cs",
+              "RelativeToolTip": "SKVS.Server\\Controllers\\UserController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T20:28:09.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CommunicationController.cs",
+              "DocumentMoniker": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\CommunicationController.cs",
+              "RelativeDocumentMoniker": "SKVS.Server\\Controllers\\CommunicationController.cs",
+              "ToolTip": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\CommunicationController.cs",
+              "RelativeToolTip": "SKVS.Server\\Controllers\\CommunicationController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T20:27:57.119Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TruckCompanyController.cs",
+              "DocumentMoniker": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\TruckCompanyController.cs",
+              "RelativeDocumentMoniker": "SKVS.Server\\Controllers\\TruckCompanyController.cs",
+              "ToolTip": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\TruckCompanyController.cs",
+              "RelativeToolTip": "SKVS.Server\\Controllers\\TruckCompanyController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T20:27:42.796Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SVSController.cs",
+              "DocumentMoniker": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\SVSController.cs",
+              "RelativeDocumentMoniker": "SKVS.Server\\Controllers\\SVSController.cs",
+              "ToolTip": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\SVSController.cs",
+              "RelativeToolTip": "SKVS.Server\\Controllers\\SVSController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T20:27:12.484Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GateController.cs",
+              "DocumentMoniker": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\GateController.cs",
+              "RelativeDocumentMoniker": "SKVS.Server\\Controllers\\GateController.cs",
+              "ToolTip": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\SKVS.Server\\Controllers\\GateController.cs",
+              "RelativeToolTip": "SKVS.Server\\Controllers\\GateController.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-29T20:26:56.25Z",
+              "EditorCaption": ""
             }
           ]
         },

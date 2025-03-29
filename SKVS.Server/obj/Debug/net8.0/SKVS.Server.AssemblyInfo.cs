@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SKVS.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+752d1d0cd7a27a54d3295a3a92fe156966a5ee5a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d5627a3a91a39c51b0d2dcfad1dc424632930360")]
 [assembly: System.Reflection.AssemblyProductAttribute("SKVS.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SKVS.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

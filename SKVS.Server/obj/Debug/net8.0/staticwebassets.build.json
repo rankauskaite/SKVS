@@ -1,0 +1,24 @@
+{
+  "Version": 1,
+  "Hash": "DTlBiCxXykjWQ/oaPE0VS6Y2i3Q13+Ih53yqRDB0WHg=",
+  "Source": "SKVS.Server",
+  "BasePath": "_content/SKVS.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\onedrive\\Dokumentai\\GitHub\\SKVS\\skvs.client\\skvs.client.esproj",
+      "Version": 2,
+      "Source": "skvs.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
