@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using SKVS.Server.Enums;
+using SKVS.Server.Enums; 
+using System.Text.Json.Serialization; 
+using SKVS.Server.Models; 
+
 
 namespace SKVS.Server.Models
 { 
@@ -8,7 +11,8 @@ namespace SKVS.Server.Models
     public class TransportationOrder
     {
         [Key] 
-        [Column("orderID")]
+        [Column("orderID")] 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
 
         [Column("description")]
@@ -39,13 +43,19 @@ namespace SKVS.Server.Models
         [Column("createdBy_id")]
         public int CreatedById { get; set; }
 
-        [ForeignKey("CreatedById")]
+        [ForeignKey("CreatedById")] 
+        [JsonIgnore]
         public TruckingCompanyManager? CreatedBy { get; set; }
 
-        // Foreign Key į Truck
+        // Foreign Key į Truck 
+        [ForeignKey("truckPlateNumber")] 
         public string TruckPlateNumber { get; set; } = string.Empty;
 
-        [ForeignKey("TruckPlateNumber")]
-        public Truck? Truck { get; set; }
+        [ForeignKey("TruckPlateNumber")] 
+        [JsonIgnore]
+        public Truck? Truck { get; set; } 
+
+        [JsonIgnore] // ciklų išvengimui atsakant
+        public List<WarehouseOrder> WarehouseOrders { get; set; } = new();
     }
 }

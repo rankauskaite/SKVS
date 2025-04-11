@@ -1,83 +1,54 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SKVS.Server.Models;
+using SKVS.Server.Repository;
 
 namespace SKVS.Server.Controllers
 {
-    public class SVSController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class SVSController : ControllerBase
     {
-        // GET: SVSController
-        public ActionResult Index()
+        private readonly ISVSRepository _repository;
+
+        public SVSController(ISVSRepository repository)
         {
-            return View();
+            _repository = repository;
         }
 
-        // GET: SVSController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            return View();
+            var all = await _repository.GetAllAsync();
+            return Ok(all);
         }
 
-        // GET: SVSController/Create
-        public ActionResult Create()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            return View();
+            var svs = await _repository.GetByIdAsync(id);
+            return svs == null ? NotFound() : Ok(svs);
         }
 
-        // POST: SVSController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Post(SVS svs)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _repository.AddAsync(svs);
+            return CreatedAtAction(nameof(Get), new { id = svs.Id }, svs);
         }
 
-        // GET: SVSController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, SVS svs)
         {
-            return View();
+            if (id != svs.Id) return BadRequest();
+            await _repository.UpdateAsync(svs);
+            return NoContent();
         }
 
-        // POST: SVSController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: SVSController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: SVSController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _repository.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

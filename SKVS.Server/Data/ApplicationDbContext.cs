@@ -13,7 +13,11 @@ namespace SKVS.Server.Data
         public DbSet<TransportationOrder> TransportationOrders { get; set; } 
         public DbSet<TruckingCompanyManager> TruckingCompanyManagers { get; set; } 
         public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<Truck> Trucks { get; set; }
+        public DbSet<Truck> Trucks { get; set; } 
+        public DbSet<WarehouseOrder> WarehouseOrders { get; set; } 
+        public DbSet<SVS> SVS { get; set; }
+
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

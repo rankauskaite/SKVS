@@ -85,7 +85,7 @@ CREATE TABLE GuestCar (
 
 -- 11. TransportationOrder (su ENUM)
 CREATE TABLE TransportationOrder (
-    orderID INT PRIMARY KEY,
+    orderID INT PRIMARY KEY AUTO_INCREMENT,
     description TEXT,
     address VARCHAR(255),
     isCancelled BOOLEAN DEFAULT FALSE,
