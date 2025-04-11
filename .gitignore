@@ -14,7 +14,11 @@ obj/
 *.snupkg
 packages/
 *.nuspec 
-*.psmdcp 
+*.psmdcp  
+
+# NuGet automatiniai failai
+*.nuget.g.props
+*.nuget.g.targets
 
 # Visual Studio cache files
 *.cache
