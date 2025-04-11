@@ -13,11 +13,22 @@ obj/
 *.nupkg
 *.snupkg
 packages/
-*.nuspec
+*.nuspec 
+*.psmdcp 
+
+# Visual Studio cache files
+*.cache
+*.config
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
 ## Konfigūraciniai failai, kurių nereikia Git'e
 launch.json
-appsettings.Development.json
+appsettings.Development.json 
+*.assets.json
+*.nuget.cache
 
 ## Mac / Windows / Linux OS failai
 .DS_Store
