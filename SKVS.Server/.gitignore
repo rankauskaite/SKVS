@@ -1,20 +1,28 @@
 ## .NET
 bin/
-obj/
-*.user
-*.suo
+obj/ 
+*.dll
+*.exe
 *.userosscache
-*.sln.docstates
+*.sln.docstates 
+*.pdb
+*.cache
+*.deps.json
 
 ## VS Code
-.vscode/
+.vscode/ 
+*.user
+*.suo
 
 ## NuGet
 *.nupkg
 *.snupkg
 packages/
 *.nuspec 
-*.psmdcp  
+*.psmdcp   
+
+# SPA proxy (lokalus kelias ir konfigas)
+spa.proxy.json
 
 # NuGet automatiniai failai
 *.nuget.g.props
