@@ -1,0 +1,47 @@
+## .NET
+bin/
+obj/ 
+*.dll
+*.exe
+*.userosscache
+*.sln.docstates 
+*.pdb
+*.cache
+*.deps.json
+
+## VS Code
+.vscode/ 
+*.user
+*.suo
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec 
+*.psmdcp   
+
+# SPA proxy (lokalus kelias ir konfigas)
+spa.proxy.json
+
+# NuGet automatiniai failai
+*.nuget.g.props
+*.nuget.g.targets
+
+# Visual Studio cache files
+*.cache
+*.config
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Konfigūraciniai failai, kurių nereikia Git'e
+launch.json
+appsettings.Development.json 
+*.assets.json
+*.nuget.cache
+
+## Mac / Windows / Linux OS failai
+.DS_Store
+Thumbs.db
