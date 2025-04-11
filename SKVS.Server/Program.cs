@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SKVS.Server.Data;
-//using SKVS.Server.Repository;
+using SKVS.Server.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +17,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     ));
 
 // 🔧 Register repository
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>(); 
+builder.Services.AddScoped<IDriverRepository, DriverRepository>(); 
+builder.Services.AddScoped<ITransportationOrderRepository, TransportationOrderRepository>(); 
+builder.Services.AddScoped<ITruckingCompanyManagerRepository, TruckingCompanyManagerRepository>(); 
+builder.Services.AddScoped<ITruckRepository, TruckRepository>(); 
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+
+
+
 
 var app = builder.Build();
 

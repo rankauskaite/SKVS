@@ -15,9 +15,15 @@ namespace SKVS.Server.Models
         public string Username { get; set; } = string.Empty; 
 
         [Column("phoneNumber")]
-        public string Email { get; set; } = string.Empty; 
+        public string PhoneNumber  { get; set; } = string.Empty; 
 
         [Column("password")]
-        public string PasswordHash { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty; 
+
+        [JsonIgnore]
+        public Driver? Driver { get; set; } 
+
+        [JsonIgnore]
+        public TruckingCompanyManager? Manager { get; set; }
     }
 }

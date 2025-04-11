@@ -1,6 +1,5 @@
 using SKVS.Server.Models;
 
-
 public interface IUserRepository
 {
     Task<IEnumerable<User>> GetAllAsync();
