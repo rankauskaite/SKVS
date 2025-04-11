@@ -1,59 +1,83 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import '../TableStyles.css';
 
-export default function TransportationOrdersList() {
+const TransportationOrdersList = ({ onNavigate }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/api/transportationorder")
-      .then((res) => res.json())
-      .then(setOrders)
-      .catch((err) => console.error("Klaida:", err))
-      .finally(() => setLoading(false));
+    fetchOrders();
   }, []);
 
-  if (loading) {
-    return <p className="text-gray-500">⏳ Kraunama...</p>;
-  }
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch('/api/transportationorder');
+      if (!response.ok) {
+        throw new Error(`Klaida: ${response.status}`);
+      }
+      const data = await response.json();
+      setOrders(data);
+    } catch (err) {
+      console.error('Klaida:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (orders.length === 0) {
-    return <p className="text-gray-500">📭 Užsakymų nėra.</p>;
-  }
+  if (loading) return <div className="full-page-center"><p>Kraunama...</p></div>;
+  if (error) return <div className="full-page-center"><p>Įvyko klaida: {error}</p></div>;
+  if (orders.length === 0) return <div className="full-page-center"><p>Nėra jokių užsakymų.</p></div>;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse border rounded">
-        <thead className="bg-gray-100">
+    <div className="full-page-center">
+      <h2 className="table-title">Transportation Orders</h2>
+      <table className="orders-table">
+        <thead>
           <tr>
-            <th className="border px-4 py-2">ID</th>
-            <th className="border px-4 py-2">Aprašymas</th>
-            <th className="border px-4 py-2">Adresas</th>
-            <th className="border px-4 py-2">Būsena</th>
-            <th className="border px-4 py-2">Data</th>
-            <th className="border px-4 py-2">Rampos</th>
-            <th className="border px-4 py-2">Vyksta</th>
-            <th className="border px-4 py-2">Įvykdyta</th>
-            <th className="border px-4 py-2">Atšaukta</th>
-            <th className="border px-4 py-2">Sunkv. numeris</th>
+            <th>Order ID</th>
+            <th>Description</th>
+            <th>Address</th>
+            <th>Delivery Time</th>
+            <th>Ramp</th>
+            <th>State</th>
+            <th>Is On The Way</th>
+            <th>Truck Plate</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
+          {orders.map(order => (
             <tr key={order.orderID}>
-              <td className="border px-4 py-2">{order.orderID}</td>
-              <td className="border px-4 py-2">{order.description}</td>
-              <td className="border px-4 py-2">{order.address}</td>
-              <td className="border px-4 py-2">{order.state}</td>
-              <td className="border px-4 py-2">{new Date(order.deliveryTime).toLocaleDateString()}</td>
-              <td className="border px-4 py-2">{order.ramp}</td>
-              <td className="border px-4 py-2">{order.isOnTheWay ? "✔️" : "❌"}</td>
-              <td className="border px-4 py-2">{order.isCompleted ? "✔️" : "❌"}</td>
-              <td className="border px-4 py-2">{order.isCancelled ? "✔️" : "❌"}</td>
-              <td className="border px-4 py-2">{order.truckPlateNumber}</td>
+              <td>{order.orderID}</td>
+              <td>{order.description}</td>
+              <td>{order.address}</td>
+              <td>{order.deliveryTime}</td>
+              <td>{order.ramp}</td>
+              <td>{order.state}</td>
+              <td>{order.isOnTheWay ? 'Yes' : 'No'}</td>
+              <td>{order.truckPlateNumber}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <div className="mt-4 flex gap-4">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+          onClick={() => onNavigate("createTransportation")}
+        >
+          ➕ Naujas Transportation Order
+        </button>
+        <button
+          className="bg-green-600 text-white px-4 py-2 rounded"
+          onClick={() => onNavigate("createWarehouse")}
+        >
+          📦 Naujas Warehouse Order
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default TransportationOrdersList;
