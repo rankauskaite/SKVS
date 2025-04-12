@@ -29,7 +29,7 @@ function App() {
     selectedDeliveryTime: null,
   });
 
-  // ⏬ UŽKRAUTI UŽSAKYMUS IŠ SERVERIO
+  // Užkraunam visus užsakymus
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -72,12 +72,16 @@ function App() {
   };
 
   const handleDeliveryTimeUpdate = (orderId, deliveryTime) => {
+    const fullDate = new Date(deliveryTime.date);
+    fullDate.setHours(deliveryTime.time?.hours || 0);
+    fullDate.setMinutes(deliveryTime.time?.minutes || 0);
+
     setOrders((prev) =>
       prev.map((order) =>
         order.orderId === orderId
           ? {
               ...order,
-              deliveryTime: `${deliveryTime.date}T${String(deliveryTime.time?.hours).padStart(2, "0")}:${String(deliveryTime.time?.minutes).padStart(2, "0")}`,
+              deliveryTime: fullDate.toISOString(), // ISO string, kad veiktų new Date(...)
               ramp: deliveryTime.ramp,
               deliveryTimeId: deliveryTime.id,
             }
@@ -128,7 +132,7 @@ function App() {
           onSuccess={() => {
             resetForm();
             setCurrentPage("home");
-            fetchOrders(); // refreshinam po naujo užsakymo
+            fetchOrders(); // atnaujinti sąrašą
           }}
         />
       )}
