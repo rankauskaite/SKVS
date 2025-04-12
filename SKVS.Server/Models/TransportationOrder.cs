@@ -49,13 +49,20 @@ namespace SKVS.Server.Models
 
         // Foreign Key į Truck 
         [ForeignKey("truckPlateNumber")] 
-        public string TruckPlateNumber { get; set; } = string.Empty;
+        public string? TruckPlateNumber { get; set; } = string.Empty;
 
         [ForeignKey("TruckPlateNumber")] 
         [JsonIgnore]
         public Truck? Truck { get; set; } 
 
-        [JsonIgnore] // ciklų išvengimui atsakant
-        public List<WarehouseOrder> WarehouseOrders { get; set; } = new();
+        //[JsonIgnore] // ciklų išvengimui atsakant
+        public List<WarehouseOrder> WarehouseOrders { get; set; } = new(); 
+        [Column("assignedDriverId")]
+        public int? AssignedDriverId { get; set; }
+
+        [ForeignKey("AssignedDriverId")] 
+        [JsonIgnore]
+        public Driver? AssignedDriver { get; set; }
+
     }
 }
