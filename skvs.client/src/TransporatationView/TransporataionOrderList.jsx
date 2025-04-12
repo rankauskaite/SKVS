@@ -1,33 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import '../TableStyles.css';
+import React from "react";
+import Swal from "sweetalert2";
+import "../TableStyles.css";
 
-const TransportationOrdersList = ({ onNavigate }) => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const TransportationOrdersList = ({ onNavigate, orders, setOrders }) => {
+  const handleCancel = async (orderId) => {
+    const confirm = await Swal.fire({
+      title: "Ar tikrai norite atšaukti rezervaciją?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Taip",
+      cancelButtonText: "Ne",
+    });
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (confirm.isConfirmed) {
+      const res = await fetch(`/api/transportationorder/${orderId}/cancelDeliveryTime`, {
+        method: "PUT",
+      });
 
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch('/api/transportationorder');
-      if (!response.ok) {
-        throw new Error(`Klaida: ${response.status}`);
+      if (res.ok) {
+        Swal.fire("✅ Atšaukta", "Rezervacija sėkmingai atšaukta", "success");
+
+        // Atšaukus išvalom laiką lokaliai
+        setOrders((prev) =>
+          prev.map((order) =>
+            order.orderId === orderId
+              ? { ...order, deliveryTime: null, ramp: null }
+              : order
+          )
+        );
+      } else {
+        Swal.fire("❌ Klaida", "Nepavyko atšaukti rezervacijos", "error");
       }
-      const data = await response.json();
-      setOrders(data);
-    } catch (err) {
-      console.error('Klaida:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
-  if (loading) return <div className="full-page-center"><p>Kraunama...</p></div>;
-  if (error) return <div className="full-page-center"><p>Įvyko klaida: {error}</p></div>;
   if (orders.length === 0) return <div className="full-page-center"><p>Nėra jokių užsakymų.</p></div>;
 
   return (
@@ -44,19 +50,45 @@ const TransportationOrdersList = ({ onNavigate }) => {
             <th>State</th>
             <th>Is On The Way</th>
             <th>Truck Plate</th>
+            <th>Veiksmai</th>
           </tr>
         </thead>
         <tbody>
           {orders.map(order => (
-            <tr key={order.orderID}>
-              <td>{order.orderID}</td>
+            <tr key={order.orderId}>
+              <td>{order.orderId}</td>
               <td>{order.description}</td>
               <td>{order.address}</td>
-              <td>{order.deliveryTime}</td>
-              <td>{order.ramp}</td>
+              <td>{order.deliveryTime ? new Date(order.deliveryTime).toLocaleString() : 'Nepaskirtas'}</td>
+              <td>{order.ramp ?? '-'}</td>
               <td>{order.state}</td>
-              <td>{order.isOnTheWay ? 'Yes' : 'No'}</td>
-              <td>{order.truckPlateNumber}</td>
+              <td>{order.isOnTheWay ? 'Taip' : 'Ne'}</td>
+              <td>{order.truckPlateNumber || '-'}</td>
+              <td className="flex flex-col gap-2">
+                {!order.deliveryTime ? (
+                  <button
+                    className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
+                    onClick={() => onNavigate("selectDeliveryTime", order.orderId)}
+                  >
+                    🕒 Priskirti laiką
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="bg-yellow-500 text-white px-2 py-1 rounded text-sm"
+                      onClick={() => onNavigate("selectDeliveryTime", order.orderId)}
+                    >
+                      ✏️ Keisti laiką
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-2 py-1 rounded text-sm"
+                      onClick={() => handleCancel(order.orderId)}
+                    >
+                      ❌ Atšaukti laiką
+                    </button>
+                  </>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

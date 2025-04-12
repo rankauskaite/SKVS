@@ -15,6 +15,9 @@ namespace SKVS.Server.Models
         public string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public ICollection<WarehouseOrder> WarehouseOrders { get; set; } = new List<WarehouseOrder>();
+        public ICollection<WarehouseOrder> WarehouseOrders { get; set; } = new List<WarehouseOrder>(); 
+
+        [JsonIgnore]
+        public ICollection<AvailableDeliveryTime> AvailableTimes { get; set; } = new List<AvailableDeliveryTime>();
     }
 }
