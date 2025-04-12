@@ -59,5 +59,11 @@ namespace SKVS.Server.Controllers
             var availableOrders = await _repository.GetUnassignedAsync(); // turi būti įgyvendinta repozitorijoje
             return Ok(availableOrders);
         }
+        [HttpGet("getCurrentOrderInfo")]
+        public async Task<IActionResult> GetCurrentOrderInfo()
+        {
+            return Ok();
+
+        }
     }
 }

@@ -8,6 +8,9 @@ namespace SKVS.Server.Repository
     {
         private readonly ApplicationDbContext _context;
 
+        // seka dabartini uzsakyma
+        private WarehouseOrder? _currentOrder;
+
         public WarehouseOrderRepository(ApplicationDbContext context)
         {
             _context = context;
@@ -20,7 +23,12 @@ namespace SKVS.Server.Repository
 
         public async Task<WarehouseOrder?> GetByIdAsync(int id)
         {
-            return await _context.WarehouseOrders.Include(x => x.Client).FirstOrDefaultAsync(x => x.Id == id);
+            var order = await _context.WarehouseOrders.Include(x => x.Client).FirstOrDefaultAsync(x => x.Id == id);
+            if (order != null)
+            {
+                _currentOrder = order;
+            }
+            return order;
         }
 
         public async Task AddAsync(WarehouseOrder order)
@@ -50,6 +58,9 @@ namespace SKVS.Server.Repository
                 .Where(wo => wo.TransportationOrderID  == null)
                 .ToListAsync();
         }
-
+        public WarehouseOrder? GetCurrentOrder()
+        {
+            return _currentOrder;
+        }
     }
 }
