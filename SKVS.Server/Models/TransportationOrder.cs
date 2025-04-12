@@ -55,7 +55,7 @@ namespace SKVS.Server.Models
         [JsonIgnore]
         public Truck? Truck { get; set; } 
 
-        [JsonIgnore] // ciklų išvengimui atsakant
+        //[JsonIgnore] // ciklų išvengimui atsakant
         public List<WarehouseOrder> WarehouseOrders { get; set; } = new();
     }
 }
