@@ -24,5 +24,8 @@ namespace SKVS.Server.Models
 
         [ForeignKey("SvsId")]
         public SVS? Svs { get; set; }
+
+        [Column("isTaken")]
+        public bool IsTaken { get; set; }
     }
 }

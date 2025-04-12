@@ -1,25 +1,33 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-function SelectDeliveryTimePage({ orderId, onBack, onSuccess }) {
+function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
   const [times, setTimes] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
   const [error, setError] = useState(null);
+  const [time, setTime] = useState(null);
 
-  useEffect(() => {
-    fetch("/api/AvailableDeliveryTime")
+  useEffect(() => { 
+    const provideReservationTimes = async () => {
+    fetch(`/api/deliverytimemanagement/${orderId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Nepavyko gauti laikų");
         return res.json();
       })
-      .then((data) => setTimes(data)) // Naudojam kaip yra
+      .then((data) => {
+        setTimes(data.deliveryTimes);  // Set delivery times
+        setTime(data.orderDate);  // Set the order date
+      })
       .catch((err) => {
         console.error("❌ Klaida gaunant laikus:", err);
         setError("Nepavyko gauti laikų");
       });
-  }, []);
+    };
+    provideReservationTimes();
+  }, [orderId]);  // Pakeista priklausomybė į orderId, kad API užklausa būtų atliekama, kai keičiasi orderId
+  
 
-  const handleSelect = async () => {
+  const chooseTime = async () => {
     if (!selectedTime) {
       Swal.fire({
         title: "⚠️ Nepasirinktas laikas",
@@ -30,12 +38,12 @@ function SelectDeliveryTimePage({ orderId, onBack, onSuccess }) {
     }
 
     try {
-      const response = await fetch(`/api/transportationorder/${orderId}/setDeliveryTime`, {
+      const response = await fetch(`/api/deliverytimemanagement/${orderId}/setDeliveryTime`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ deliveryTimeId: selectedTime.id }),
+        body: JSON.stringify({ deliveryTimeId: selectedTime.deliveryTimeId, deliveryTime: selectedTime, ramp: selectedTime.ramp, time: selectedTime.time }),
       });
 
       if (!response.ok) throw new Error("Nepavyko išsaugoti pasirinkto laiko");
@@ -44,7 +52,7 @@ function SelectDeliveryTimePage({ orderId, onBack, onSuccess }) {
         title: "✅ Pristatymo laikas pasirinktas!",
         html: `
           <p><strong>Data:</strong> ${selectedTime.date.split("T")[0]}</p>
-          <p><strong>Laikas:</strong> ${selectedTime.time?.hours}:${selectedTime.time?.minutes}</p>
+          <p><strong>Laikas:</strong> ${selectedTime.time/60}:00</p>
           <p><strong>Ramp:</strong> ${selectedTime.ramp}</p>
         `,
         icon: "success",
@@ -69,7 +77,7 @@ function SelectDeliveryTimePage({ orderId, onBack, onSuccess }) {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">🕒 Pasirinkti pristatymo laiką</h2>
+      <h2 className="text-xl font-bold mb-4">🕒 Pasirinkti pristatymo laiką {time}</h2>
 
       {error && <p className="text-red-500">{error}</p>}
 
@@ -88,7 +96,7 @@ function SelectDeliveryTimePage({ orderId, onBack, onSuccess }) {
                   className="mr-2"
                 />
                 <span>
-                  {t.date.split("T")[0]} {t.time?.hours}:{t.time?.minutes} – Ramp: {t.ramp}
+                  {t.date.split("T")[0]} {t.time/60}:00  – Ramp: {t.ramp}
                 </span>
               </label>
             </li>
@@ -98,7 +106,7 @@ function SelectDeliveryTimePage({ orderId, onBack, onSuccess }) {
 
       <div className="flex gap-4 mt-4">
         <button
-          onClick={handleSelect}
+          onClick={chooseTime}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
           Pasirinkti

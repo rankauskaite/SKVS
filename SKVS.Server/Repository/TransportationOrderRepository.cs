@@ -46,5 +46,17 @@ namespace SKVS.Server.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public Task SaveOrderDeliveryInformation(int id, DateTime deliveryTime, int ramp)
+        {
+            var order = _context.TransportationOrders.Find(id);
+            if (order != null)
+            {
+                order.DeliveryTime = deliveryTime;
+                order.Ramp = ramp;
+                _context.SaveChangesAsync();
+            }
+            return Task.CompletedTask;
+        }
     }
 }

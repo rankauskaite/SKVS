@@ -6,7 +6,7 @@ import CreateTransportationOrder from "./TransporatationView/CreateTransportatio
 import CreateWarehouseOrder from "./WareHouseView/CreateWarehouseOrder";
 import SelectDriverPage from "./TransporatationView/SelectDriverPage";
 import SelectTruckPage from "./TransporatationView/SelectTruckPage";
-import SelectDeliveryTimePage from "./TransporatationView/SelectDeliveryTimePage";
+import DeliveryTimeManagement from "./TransporatationView/DeliveryTimeManagement";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -14,7 +14,25 @@ function App() {
   const [selectedTruck, setSelectedTruck] = useState(null);
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [orders, setOrders] = useState([]);
+  const [driverId, setDriverId] = useState(null);
+  const [drivers, setDrivers] = useState([]);
+
+  useEffect(() => {
+    // Pirmiausia užkrauname vairuotojų sąrašą
+    const getDrivers = async () => {
+      try {
+        const res = await fetch("/api/transportationorderform/drivers"); // Užklausa gauti vairuotojų sąrašą
+        if (!res.ok) throw new Error("Nepavyko gauti vairuotojų");
+        const data = await res.json();
+        setDrivers(data); // Įrašome vairuotojus į state
+      } catch (err) {
+        console.error("❌ Klaida gaunant vairuotojus:", err);
+        Swal.fire("Klaida", "Nepavyko užkrauti vairuotojų", "error");
+      }
+    };
+
+    getDrivers();
+  }, []);
 
   const [form, setForm] = useState({
     description: "",
@@ -28,23 +46,6 @@ function App() {
     selectedTruck: null,
     selectedDeliveryTime: null,
   });
-
-  // Užkraunam visus užsakymus
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
-    try {
-      const res = await fetch("/api/transportationorder");
-      if (!res.ok) throw new Error("Nepavyko gauti užsakymų");
-      const data = await res.json();
-      setOrders(data);
-    } catch (err) {
-      console.error("❌ Klaida gaunant užsakymus:", err);
-      Swal.fire("Klaida", "Nepavyko užkrauti užsakymų", "error");
-    }
-  };
 
   const resetForm = () => {
     setForm({
@@ -105,16 +106,114 @@ function App() {
     );
   };
 
+  const [orderDate, setOrderDate] = useState(null);
+
+  useEffect(() => {
+    if (selectedOrderId) {
+      fetch(`/api/transportationorders/${selectedOrderId}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Nepavyko gauti užsakymo");
+          return res.json();
+        })
+        .then((data) => {
+          setOrderDate(data.deliveryTime);  // Tarkime, kad 'deliveryTime' yra užsakymo data
+        })
+        .catch((err) => {
+          console.error("Klaida gaunant užsakymą:", err);
+        });
+    }
+  }, [selectedOrderId]);  // Stebi 'selectedOrderId'
+
+  // Funkcija, kuri atnaujina pasirinkto vairuotojo ID
+  const handleDriverChange = (e) => {
+    const selectedDriverId = e.target.value;  // Imame pasirinkto vairuotojo userId
+    setDriverId(selectedDriverId ? selectedDriverId : null);
+  };
+
   return (
     <div className="App p-6">
       <h1 className="text-2xl font-bold mb-4">🚚 SKVS Sistema</h1>
 
-      {currentPage === "home" && (
+      {/* Add the 3 buttons */}
+      <div className="mb-4">
+        <button
+          className="mr-2 p-2 bg-blue-500 text-white rounded"
+          onClick={() => setCurrentPage("driver")}
+        >
+          Vairuotojas
+        </button>
+        <button
+          className="mr-2 p-2 bg-blue-500 text-white rounded"
+          onClick={() => setCurrentPage("truckCompany")}
+        >
+          Sunkvežimių įmonė
+        </button>
+        <button
+          className="mr-2 p-2 bg-blue-500 text-white rounded"
+          onClick={() => setCurrentPage("SVS")}
+        >
+          SVS
+        </button>
+      </div>
+
+      {/* Dropdown meniu pasirinkti vairuotoją */}
+      {/* <div className="mb-4">
+        <label htmlFor="driverSelect" className="block text-sm font-medium text-gray-700">
+          Pasirinkite vairuotoją:
+        </label>
+        <select
+          id="driverSelect"
+          value={driverId || ""}
+          onChange={handleDriverChange}
+          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md"
+        >
+          <option value="">Vairuotojai</option>
+          {drivers.map((driver) => (
+            <option key={driver.id} value={driver.id}>
+              {driver.name}
+            </option>
+          ))}
+        </select> */}
+
+        {/* Parodyti pasirinktą vairuotoją */}
+        {/* {driverId && (
+          <div className="mt-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Pasirinktas vairuotojas: driverId {driverId}
+              Pasirinktas vairuotojas: {drivers.find(driver => driver.userId === driverId)?.name || "Nėra pasirinktas"}
+            </label>
+          </div>
+        )}
+      </div> */}
+
+      {/* Render the corresponding page based on selected page */}
+      {currentPage === "driver" && (
         <TransportationOrdersList
           onNavigate={handleNavigate}
-          orders={orders}
-          setOrders={setOrders}
+          actor={currentPage}
+          actorId={1}
+          actors={drivers}
           onCancelDeliveryTime={handleCancelDeliveryTime}
+        />
+      )}
+
+      {currentPage === "truckCompany" && (
+        <TransportationOrdersList
+          onNavigate={handleNavigate}
+          actor={currentPage}
+          actorId={1}
+          actors={drivers}
+          onCancelDeliveryTime={handleCancelDeliveryTime}
+        />
+      )}
+
+      {currentPage === "SVS" && (
+        <SelectDeliveryTimePage
+          orderId={selectedOrderId}
+          onBack={() => {
+            setSelectedOrderId(null);
+            setCurrentPage("home");
+          }}
         />
       )}
 
@@ -164,8 +263,9 @@ function App() {
       )}
 
       {currentPage === "selectDeliveryTime" && selectedOrderId && (
-        <SelectDeliveryTimePage
+        <DeliveryTimeManagement
           orderId={selectedOrderId}
+          orderDate={orderDate}
           onSelect={(deliveryTime) => {
             setSelectedDeliveryTime(deliveryTime);
             setForm((prev) => ({

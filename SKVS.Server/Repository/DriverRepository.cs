@@ -13,7 +13,7 @@ namespace SKVS.Server.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Driver>> GetAllAsync() =>
+        public async Task<IEnumerable<Driver>> GetDrivers() =>
             await _context.Drivers.Include(d => d.User).ToListAsync();
 
         public async Task<Driver?> GetByUserIdAsync(int userId) =>
