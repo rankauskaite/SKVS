@@ -17,8 +17,7 @@ namespace SKVS.Server.Data
         public DbSet<WarehouseOrder> WarehouseOrders { get; set; } 
         public DbSet<SVS> SVS { get; set; }
 
-
-
+        public DbSet<AvailableDeliveryTime> AvailableDeliveryTimes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +45,11 @@ namespace SKVS.Server.Data
                 .WithMany(o => o.Trucks)
                 .HasForeignKey(t => t.OwnerId);
 
+            modelBuilder.Entity<TransportationOrder>()
+                .HasOne(o => o.DeliveryTimeSlot)
+                .WithMany()
+                .HasForeignKey(o => o.DeliveryTimeId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

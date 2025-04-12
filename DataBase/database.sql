@@ -95,7 +95,8 @@ CREATE TABLE TransportationOrder (
     assignedDriverId INT,
     state ENUM('Cancelled', 'Formed', 'InProgress', 'Completed'),
     isOnTheWay BOOLEAN DEFAULT FALSE,
-    createdBy_id INT,
+    createdBy_id INT, 
+    deliveryTimeId INT,
     truckPlateNumber VARCHAR(20),
     FOREIGN KEY (createdBy_id) REFERENCES TruckingCompanyManager(user_id),
     FOREIGN KEY (truckPlateNumber) REFERENCES Truck(plateNumber)
