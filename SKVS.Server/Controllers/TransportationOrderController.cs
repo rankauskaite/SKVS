@@ -142,7 +142,34 @@ namespace SKVS.Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }  
+
+        [HttpPut("{id}/driver")]
+        public async Task<IActionResult> AssignDriver(int id, [FromBody] AssignDriverRequest model)
+        {
+            var order = await _context.TransportationOrders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            // Patikrinti ar toks vairuotojas egzistuoja
+            var driver = await _context.Drivers.FindAsync(model.DriverId);
+            if (driver == null) return BadRequest("Vairuotojas nerastas");
+
+            // Priskirti vairuotoją
+            order.AssignedDriverId = model.DriverId;
+            _context.Entry(order).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
+
+        public class AssignDriverRequest
+        {
+            public int DriverId { get; set; }
+        }
+
+
+
+        
 
         // ✅ Vidinė klasė tik Create / Update POST requestams
         public class TransportationOrderInputModel
@@ -154,9 +181,11 @@ namespace SKVS.Server.Controllers
             public bool IsCancelled { get; set; } = false;
             public bool IsCompleted { get; set; } = false;
             public bool IsOnTheWay { get; set; } = false;
-            public int CreatedById { get; set; }
-            public string TruckPlateNumber { get; set; } = string.Empty;
-            public OrderState State { get; set; }
+            public int CreatedById { get; set; } 
+            public int? AssignedDriverId { get; set; }
+            public string? TruckPlateNumber { get; set; }
+            public OrderState State { get; set; } 
+
 
             public List<int> WarehouseOrderIds { get; set; } = new();
         }

@@ -16,8 +16,22 @@ namespace SKVS.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            Ok(await _repository.GetAllAsync());
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var drivers = await _repository.GetAllAsync();
+
+            var result = drivers.Select(d => new
+            {
+                d.UserId,
+                d.Name,
+                d.Surname
+            });
+
+            return Ok(result);
+        }
+
+
 
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetByUserId(int userId)
