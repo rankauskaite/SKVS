@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 
-function CreateTransportationOrder({ form, setForm, onBack, onSelectDriver, onSelectTruck, onSuccess }) {
+function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
   const [warehouseOrders, setWarehouseOrders] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [trucks, setTrucks] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchAvailableWarehouseOrders();
+    fetchDrivers();
+    fetchTrucks();
   }, []);
 
   const fetchAvailableWarehouseOrders = async () => {
@@ -18,11 +22,31 @@ function CreateTransportationOrder({ form, setForm, onBack, onSelectDriver, onSe
     }
   };
 
+  const fetchDrivers = async () => {
+    try {
+      const response = await fetch("/api/driver");
+      const data = await response.json();
+      setDrivers(data);
+    } catch (error) {
+      console.error("Klaida gaunant vairuotojus:", error);
+    }
+  };
+
+  const fetchTrucks = async () => {
+    try {
+      const response = await fetch("/api/truck");
+      const data = await response.json();
+      setTrucks(data);
+    } catch (error) {
+      console.error("Klaida gaunant vilkikus:", error);
+    }
+  };
+
   const handleOrderToggle = (orderId) => {
     const isSelected = form.warehouseOrderIds.includes(orderId);
     const updated = isSelected
-      ? form.warehouseOrderIds.filter(id => id !== orderId)
-      : [...form.warehouseOrderIds, orderId];
+        ? form.warehouseOrderIds.filter(id => id !== orderId)
+        : [...form.warehouseOrderIds, orderId];
 
     setForm(prev => ({ ...prev, warehouseOrderIds: updated }));
   };
@@ -71,102 +95,107 @@ function CreateTransportationOrder({ form, setForm, onBack, onSelectDriver, onSe
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">➕ Naujas pervežimo užsakymas</h2>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <input
-          placeholder="Aprašymas"
-          value={form.description}
-          onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
-        />
-        <input
-          placeholder="Adresas"
-          value={form.address}
-          onChange={(e) => setForm(prev => ({ ...prev, address: e.target.value }))}
-        />
-        <input
-          type="date"
-          value={form.deliveryTime}
-          onChange={(e) => setForm(prev => ({ ...prev, deliveryTime: e.target.value }))}
-        />
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4">➕ Naujas pervežimo užsakymas</h2>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+              placeholder="Aprašymas"
+              value={form.description}
+              onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+          />
+          <input
+              placeholder="Adresas"
+              value={form.address}
+              onChange={(e) => setForm(prev => ({ ...prev, address: e.target.value }))}
+          />
+          <input
+              type="date"
+              value={form.deliveryTime}
+              onChange={(e) => setForm(prev => ({ ...prev, deliveryTime: e.target.value }))}
+          />
 
-        <select
-          value={form.state}
-          onChange={(e) => setForm(prev => ({ ...prev, state: e.target.value }))}
-        >
-          <option value="Formed">Sudarytas</option>
-          <option value="Planed">Suplanuotas</option>
-          <option value="InProgress">Vykdomas</option>
-          <option value="Completed">Įvykdytas</option>
-          <option value="Cancelled">Atšauktas</option>
-        </select>
-
-        <div>
-          <label className="block font-semibold">👨‍✈️ Pasirinktas vairuotojas:</label>
-          {form.selectedDriver ? (
-            <div className="bg-gray-100 p-2 rounded">
-              {form.selectedDriver.name} {form.selectedDriver.surname}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">Nepasirinktas</p>
-          )}
-          <button
-            type="button"
-            onClick={onSelectDriver}
-            className="bg-blue-500 text-white px-4 py-1 mt-2 rounded"
+          <select
+              value={form.state}
+              onChange={(e) => setForm(prev => ({ ...prev, state: e.target.value }))}
           >
-            Pasirinkti vairuotoją
-          </button>
-        </div>
+            <option value="Formed">Sudarytas</option>
+            <option value="Planed">Suplanuotas</option>
+            <option value="InProgress">Vykdomas</option>
+            <option value="Completed">Įvykdytas</option>
+            <option value="Cancelled">Atšauktas</option>
+          </select>
 
-        <div>
-          <label className="block font-semibold">🚛 Pasirinktas vilkikas:</label>
-          {form.selectedTruck ? (
-            <div className="bg-gray-100 p-2 rounded">
-              {form.selectedTruck.plateNumber}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">Nepasirinktas</p>
-          )}
-          <button
-            type="button"
-            onClick={onSelectTruck}
-            className="bg-blue-500 text-white px-4 py-1 mt-2 rounded"
-          >
-            Pasirinkti vilkiką
-          </button>
-        </div>
+          {/* Vairuotojas */}
+          <div>
+            <label className="block font-semibold">👨‍✈️ Pasirink vairuotoją:</label>
+            <select
+                value={form.selectedDriver?.userId || ""}
+                onChange={(e) => {
+                  const selected = drivers.find(d => d.userId === e.target.value);
+                  setForm(prev => ({ ...prev, selectedDriver: selected || null }));
+                }}
+                className="mt-1 p-2 border rounded w-full"
+            >
+              <option value="">-- Pasirinkti vairuotoją --</option>
+              {drivers.map(driver => (
+                  <option key={driver.userId} value={driver.userId}>
+                    {driver.name} {driver.surname}
+                  </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <h3 className="font-semibold">✅ Pasirink sandėlio užsakymus:</h3>
-          {warehouseOrders.length === 0 ? (
-            <p>Nėra laisvų užsakymų</p>
-          ) : (
-            warehouseOrders.map((wo) => (
-              <label key={wo.id} className="block">
-                <input
-                  type="checkbox"
-                  checked={form.warehouseOrderIds.includes(wo.id)}
-                  onChange={() => handleOrderToggle(wo.id)}
-                />
-                Užsakymas #{wo.id} – Kiekis: {wo.count}, Klientas ID: {wo.clientId}
-              </label>
-            ))
-          )}
-        </div>
+          {/* Vilkikas */}
+          <div>
+            <label className="block font-semibold">🚛 Pasirink vilkiką:</label>
+            <select
+                value={form.selectedTruck?.plateNumber || ""}
+                onChange={(e) => {
+                  const selected = trucks.find(t => t.plateNumber === e.target.value);
+                  setForm(prev => ({ ...prev, selectedTruck: selected || null }));
+                }}
+                className="mt-1 p-2 border rounded w-full"
+            >
+              <option value="">-- Pasirinkti vilkiką --</option>
+              {trucks.map(truck => (
+                  <option key={truck.plateNumber} value={truck.plateNumber}>
+                    {truck.plateNumber}
+                  </option>
+              ))}
+            </select>
+          </div>
 
-        {error && <p className="text-red-600">{error}</p>}
+          {/* Sandėlio užsakymai */}
+          <div>
+            <h3 className="font-semibold">✅ Pasirink sandėlio užsakymus:</h3>
+            {warehouseOrders.length === 0 ? (
+                <p>Nėra laisvų užsakymų</p>
+            ) : (
+                warehouseOrders.map((wo) => (
+                    <label key={wo.id} className="block">
+                      <input
+                          type="checkbox"
+                          checked={form.warehouseOrderIds.includes(wo.id)}
+                          onChange={() => handleOrderToggle(wo.id)}
+                      />
+                      Užsakymas #{wo.id} – Kiekis: {wo.count}, Klientas ID: {wo.clientId}
+                    </label>
+                ))
+            )}
+          </div>
 
-        <div className="flex gap-4 mt-4">
-          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-            💾 Sukurti
-          </button>
-          <button type="button" onClick={onBack} className="bg-gray-400 text-white px-4 py-2 rounded">
-            ⬅️ Atgal
-          </button>
-        </div>
-      </form>
-    </div>
+          {error && <p className="text-red-600">{error}</p>}
+
+          <div className="flex gap-4 mt-4">
+            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+              💾 Sukurti
+            </button>
+            <button type="button" onClick={onBack} className="bg-gray-400 text-white px-4 py-2 rounded">
+              ⬅️ Atgal
+            </button>
+          </div>
+        </form>
+      </div>
   );
 }
 
