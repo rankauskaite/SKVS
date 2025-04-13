@@ -60,3 +60,26 @@ INSERT INTO Message (text, isSent, isInLine, messageTransmissionTime, driver_id,
 VALUES ('Atvykimas numatytas 15:00', TRUE, FALSE, NOW(),
     (SELECT user_id FROM Driver WHERE user_id IS NOT NULL LIMIT 1),
     (SELECT user_id FROM TruckingCompanyManager LIMIT 1));
+
+--- 14. Įmonės pavadinimo pridėjimas
+ALTER TABLE TruckingCompanyManager
+ADD TruckingCompanyName VARCHAR(255);
+
+UPDATE TruckingCompanyManager
+SET TruckingCompanyName = 'Baltic Transline'
+WHERE user_id = (SELECT id FROM User WHERE username = 'manager01');
+
+--- 15. Pervežimo įmonės pridėjimas prie užsakymo
+ALTER TABLE WarehouseOrder
+ADD truckingCompanyUserId INT NULL,
+ADD CONSTRAINT FK_WarehouseOrder_TruckingCompany FOREIGN KEY (truckingCompanyUserId)
+REFERENCES TruckingCompanyManager(user_id)
+ON DELETE SET NULL;
+
+--- 16. Naujo manager User pridėjimas
+INSERT INTO User (username, password, phoneNumber) 
+VALUES ('manager02', 'pass321', '+37069876543');
+
+--- 17. Naujo TruckingCompanyManager pridėjimas
+INSERT INTO TruckingCompanyManager (user_id, TruckingCompanyName)
+SELECT id, 'Rosteka' FROM User WHERE username = 'manager02';
