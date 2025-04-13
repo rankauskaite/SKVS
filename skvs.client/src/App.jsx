@@ -16,6 +16,26 @@ function App() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [driverId, setDriverId] = useState(null);
   const [drivers, setDrivers] = useState([]);
+=======
+import TransportationOrdersList from './TransporatationView/TransporataionOrderList';
+import CreateTransportationOrder from './TransporatationView/CreateTransportationOrder';
+import CreateWarehouseOrder from './WareHouseView/CreateWarehouseOrder';
+import SelectDriverPage from './TransporatationView/SelectDriverPage';
+import SelectTruckPage from './TransporatationView/SelectTruckPage';
+import SelectDeliveryTimePage from './TransporatationView/SelectDeliveryTimePage';
+import WarehouseOrderList from './WareHouseView/WarehouseOrderList'; 
+import CheckOrderValidity from './WareHouseView/CheckOrderValidity';
+
+function App() {
+	const [currentPage, setCurrentPage] = useState('home');
+	const [selectedDriver, setSelectedDriver] = useState(null);
+	const [selectedTruck, setSelectedTruck] = useState(null);
+	const [selectedDeliveryTime, setSelectedDeliveryTime] = useState(null);
+	const [selectedOrderId, setSelectedOrderId] = useState(null);
+	const [orders, setOrders] = useState([]);
+	const [warehouseOrders, setWarehouseOrders] = useState([]);
+	const [selectedWarehouseOrder, setSelectedWarehouseOrder] = useState(null);
+>>>>>>> Stashed changes
 
   useEffect(() => {
     // Pirmiausia užkrauname vairuotojų sąrašą
@@ -76,6 +96,17 @@ function App() {
     const fullDate = new Date(deliveryTime.date);
     fullDate.setHours(deliveryTime.time?.hours || 0);
     fullDate.setMinutes(deliveryTime.time?.minutes || 0);
+=======
+	const handleNavigate = (page, extra = null) => {
+		if (page === 'selectDeliveryTime') {
+			setSelectedOrderId(extra);
+		}
+		if (page === 'CheckOrderValidity') {
+			setSelectedWarehouseOrder(extra);
+		}
+		setCurrentPage(page);
+	};
+>>>>>>> Stashed changes
 
     setOrders((prev) =>
       prev.map((order) =>
