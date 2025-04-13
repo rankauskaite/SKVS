@@ -15,7 +15,9 @@ namespace SKVS.Server.Models
         public int OrderID { get; set; } 
 
         [Column("count")]
-        public int Count { get; set; } 
+        public int Count { get; set; }
+        [Column("weight")]
+        public float Weight { get; set; }
 
         [Column("orderDate")]
         public DateTime OrderDate { get; set; } 

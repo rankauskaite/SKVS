@@ -61,7 +61,7 @@ VALUES ('Atvykimas numatytas 15:00', TRUE, FALSE, NOW(),
     (SELECT user_id FROM Driver WHERE user_id IS NOT NULL LIMIT 1),
     (SELECT user_id FROM TruckingCompanyManager LIMIT 1));
 
---- 14. Įmonės pavadinimo pridėjimas
+-- 14. Įmonės pavadinimo pridėjimas
 ALTER TABLE TruckingCompanyManager
 ADD TruckingCompanyName VARCHAR(255);
 
@@ -69,17 +69,26 @@ UPDATE TruckingCompanyManager
 SET TruckingCompanyName = 'Baltic Transline'
 WHERE user_id = (SELECT id FROM User WHERE username = 'manager01');
 
---- 15. Pervežimo įmonės pridėjimas prie užsakymo
+-- 15. Pervežimo įmonės pridėjimas prie užsakymo
 ALTER TABLE WarehouseOrder
 ADD truckingCompanyUserId INT NULL,
 ADD CONSTRAINT FK_WarehouseOrder_TruckingCompany FOREIGN KEY (truckingCompanyUserId)
 REFERENCES TruckingCompanyManager(user_id)
 ON DELETE SET NULL;
 
---- 16. Naujo manager User pridėjimas
+-- 16. Naujo manager User pridėjimas
 INSERT INTO User (username, password, phoneNumber) 
 VALUES ('manager02', 'pass321', '+37069876543');
 
---- 17. Naujo TruckingCompanyManager pridėjimas
+-- 17. Naujo TruckingCompanyManager pridėjimas
 INSERT INTO TruckingCompanyManager (user_id, TruckingCompanyName)
 SELECT id, 'Rosteka' FROM User WHERE username = 'manager02';
+
+-- prideti weight i duomenu baze
+ALTER TABLE WarehouseOrder
+ADD COLUMN weight DECIMAL(10, 2);
+
+-- papildyti warehouse order su svoriu
+UPDATE WarehouseOrder
+SET weight = 200.50
+WHERE id = 1;
