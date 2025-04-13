@@ -3,7 +3,8 @@ import Swal from "sweetalert2";
 
 import TransportationOrdersList from "./TransporatationView/TransporataionOrderList";
 import TransportationOrderForm from "./TransporatationView/TransportationOrderForm";
-import CreateWarehouseOrder from "./WareHouseView/CreateWarehouseOrder";
+import WarehouseOrderForm from "./WareHouseView/WarehouseOrderForm";
+import WarehouseOrderList from "./WareHouseView/WarehouseOrderList";
 import SelectDriverPage from "./TransporatationView/SelectDriverPage";
 import SelectTruckPage from "./TransporatationView/SelectTruckPage";
 import DeliveryTimeManagement from "./TransporatationView/DeliveryTimeManagement";
@@ -178,10 +179,11 @@ function App() {
       )}
 
       {currentPage === "SVS" && (
-        <SelectDeliveryTimePage
-          orderId={selectedOrderId}
+        <WarehouseOrderList
+          onNavigate={handleNavigate}
+          setWarehouseOrders={() => {}}
           onBack={() => {
-            setSelectedOrderId(null);
+            resetForm();
             setCurrentPage("home");
           }}
         />
@@ -207,7 +209,7 @@ function App() {
       )}
 
       {currentPage === "createWarehouse" && (
-        <CreateWarehouseOrder onBack={() => setCurrentPage("home")} />
+        <WarehouseOrderForm onBack={() => setCurrentPage("home")} />
       )}
 
       {currentPage === "selectDriver" && (

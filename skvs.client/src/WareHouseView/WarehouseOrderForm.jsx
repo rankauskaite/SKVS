@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState, useEffect, act } from "react";
+import Swal from "sweetalert2";
 
 function CreateWarehouseOrder({ onBack }) {
   const [orderID, setOrderID] = useState("");
@@ -26,7 +27,7 @@ function CreateWarehouseOrder({ onBack }) {
       });
 
       if (response.ok) {
-        alert("Warehouse Order sukurtas sėkmingai!");
+        Swal.fire("✅ Sukurta", "Sandėlio užsakymas sėkmingai sukurtas", "success");
         setOrderID("");
         setCount(1);
         setOrderDate("");
@@ -35,7 +36,7 @@ function CreateWarehouseOrder({ onBack }) {
       } else {
         const error = await response.text();
         console.error("Klaida:", error);
-        alert("Nepavyko sukurti: " + error);
+        Swal.fire("❌ Klaida", "Nepavyko sukurti sandėlio užsakymo", "error");
       }
     } catch (err) {
       console.error("Klaida:", err);
