@@ -130,6 +130,7 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 						<th>Užsakymo data</th>
 						<th>Pristatymo data</th>
 						<th>Kiekis</th>
+						<th>Svoris(Kg)</th>
 						<th>Pervežimo užsakymo Nr.</th>
 						<th>Transporto įmonė</th>
 						<th>Veiksmai</th>
@@ -143,6 +144,7 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 							<td>{order.orderDate ? new Date(order.orderDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}</td>
 							<td>{order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}</td>
 							<td>{order.count}</td>
+							<td>{order.weight}</td>
 							<td>{order.transportationOrderID ?? '-'}</td>
 							<td>
 								<select
@@ -176,7 +178,7 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 								>
 									✏️ Redaguoti užsakymą
 								</button>
-								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => {}}>
+								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => onNavigate('CheckOrderValidity', order)}>
 									🔎 Patikrinti krovinį
 								</button>
 								<button

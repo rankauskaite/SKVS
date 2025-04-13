@@ -366,12 +366,13 @@ CREATE TABLE `WarehouseOrder` (
   `transportationOrderID` int DEFAULT NULL,
   `client_id` int DEFAULT NULL,
   `truckingCompanyUserId` int DEFAULT NULL,
+  `weight` float NOT NULL,
   PRIMARY KEY (`id`),
   KEY `transportationOrderID` (`transportationOrderID`),
   KEY `client_id` (`client_id`),
   CONSTRAINT `WarehouseOrder_ibfk_1` FOREIGN KEY (`transportationOrderID`) REFERENCES `TransportationOrder` (`orderID`),
   CONSTRAINT `WarehouseOrder_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `SVS` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -380,7 +381,7 @@ CREATE TABLE `WarehouseOrder` (
 
 LOCK TABLES `WarehouseOrder` WRITE;
 /*!40000 ALTER TABLE `WarehouseOrder` DISABLE KEYS */;
-INSERT INTO `WarehouseOrder` VALUES (1,5001,120,'2025-04-10','2025-04-15',1001,1,3),(2,3,1,'2025-04-12','2025-04-17',1002,1,3),(3,7,1,'2025-04-12','2025-04-17',NULL,1,NULL);
+INSERT INTO `WarehouseOrder` VALUES (1,5001,120,'2025-04-10','2025-04-15',1001,1,3,50),(2,3,1,'2025-04-12','2025-04-17',1002,1,3,50),(3,7,1,'2025-04-12','2025-04-17',NULL,1,3,50),(4,12,1,'2025-04-13','2025-04-22',NULL,1,NULL,50),(5,32,1,'2025-04-13','2025-04-15',NULL,1,NULL,50),(6,32,1,'2025-04-13','2025-04-15',NULL,1,NULL,50);
 /*!40000 ALTER TABLE `WarehouseOrder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -427,4 +428,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-13 16:12:59
+-- Dump completed on 2025-04-13 17:35:59
