@@ -4,8 +4,8 @@ import Swal from "sweetalert2";
 function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
   const [times, setTimes] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [id, setId] = useState(null);
   const [error, setError] = useState(null);
-  const [time, setTime] = useState(null);
 
   useEffect(() => { 
     const provideReservationTimes = async () => {
@@ -16,7 +16,6 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
       })
       .then((data) => {
         setTimes(data.deliveryTimes);  // Set delivery times
-        setTime(data.orderDate);  // Set the order date
       })
       .catch((err) => {
         console.error("❌ Klaida gaunant laikus:", err);
@@ -36,35 +35,46 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
       });
       return;
     }
-
+  
     try {
       const response = await fetch(`/api/deliverytimemanagement/${orderId}/setDeliveryTime`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ deliveryTimeId: selectedTime.deliveryTimeId, deliveryTime: selectedTime, ramp: selectedTime.ramp, time: selectedTime.time }),
+        body: JSON.stringify({
+          deliveryTimeId: id,
+          deliveryTime: selectedTime.date,
+          ramp: selectedTime.ramp,
+          time: selectedTime.time,
+        }),
       });
-
+  
       if (!response.ok) throw new Error("Nepavyko išsaugoti pasirinkto laiko");
-
+  
+      // Sėkmės pranešimas su informacija apie laiką
       Swal.fire({
         title: "✅ Pristatymo laikas pasirinktas!",
         html: `
           <p><strong>Data:</strong> ${selectedTime.date.split("T")[0]}</p>
-          <p><strong>Laikas:</strong> ${selectedTime.time/60}:00</p>
+          <p><strong>Laikas:</strong> ${selectedTime.time / 60}:00</p>
           <p><strong>Ramp:</strong> ${selectedTime.ramp}</p>
         `,
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
       });
-
+  
+      // Palaukus 2 sekundes, grįžti atgal
       setTimeout(() => {
+        // Grįžtame atgal į ankstesnį puslapį
+        onBack();
+        
+        // Galite atlikti papildomą sėkmės apdorojimą, jei reikia
         if (typeof onSuccess === "function") {
           onSuccess(selectedTime);
         }
-      }, 2000);
+      }, 2000); // 2000 ms (2 sekundės) – tiek laiko rodomas sėkmės pranešimas
     } catch (error) {
       console.error("❌ Klaida siunčiant laiką:", error);
       Swal.fire({
@@ -74,10 +84,11 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
       });
     }
   };
+  
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">🕒 Pasirinkti pristatymo laiką {time}</h2>
+      <h2 className="text-xl font-bold mb-4">🕒 Pasirinkti pristatymo laiką {orderDate}</h2>
 
       {error && <p className="text-red-500">{error}</p>}
 
@@ -92,7 +103,7 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
                   type="radio"
                   name="deliveryTime"
                   value={t.id}
-                  onChange={() => setSelectedTime(t)}
+                  onChange={() => {setSelectedTime(t); setId(t.id)}}
                   className="mr-2"
                 />
                 <span>

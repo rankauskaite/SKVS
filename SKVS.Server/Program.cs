@@ -23,7 +23,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-    ));
+    ),
+    ServiceLifetime.Scoped // ✅ pridėk šitą
+);
 
 // 🔧 Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

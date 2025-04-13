@@ -83,7 +83,7 @@ namespace SKVS.Server.Controllers
                 Description = input.Description,
                 Address = input.Address,
                 DeliveryTime = input.DeliveryTime,
-                Ramp = input.Ramp,
+                Ramp = null,
                 State = input.State,
                 IsCancelled = input.IsCancelled,
                 IsCompleted = input.IsCompleted,

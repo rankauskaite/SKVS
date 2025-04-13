@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
 import TransportationOrdersList from "./TransporatationView/TransporataionOrderList";
-import CreateTransportationOrder from "./TransporatationView/CreateTransportationOrder";
+import TransportationOrderForm from "./TransporatationView/TransportationOrderForm";
 import CreateWarehouseOrder from "./WareHouseView/CreateWarehouseOrder";
 import SelectDriverPage from "./TransporatationView/SelectDriverPage";
 import SelectTruckPage from "./TransporatationView/SelectTruckPage";
@@ -110,7 +110,7 @@ function App() {
 
   useEffect(() => {
     if (selectedOrderId) {
-      fetch(`/api/transportationorders/${selectedOrderId}`)
+      fetch(`/api/transportationorder/${selectedOrderId}`)
         .then((res) => {
           if (!res.ok) throw new Error("Nepavyko gauti užsakymo");
           return res.json();
@@ -156,36 +156,6 @@ function App() {
         </button>
       </div>
 
-      {/* Dropdown meniu pasirinkti vairuotoją */}
-      {/* <div className="mb-4">
-        <label htmlFor="driverSelect" className="block text-sm font-medium text-gray-700">
-          Pasirinkite vairuotoją:
-        </label>
-        <select
-          id="driverSelect"
-          value={driverId || ""}
-          onChange={handleDriverChange}
-          className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md"
-        >
-          <option value="">Vairuotojai</option>
-          {drivers.map((driver) => (
-            <option key={driver.id} value={driver.id}>
-              {driver.name}
-            </option>
-          ))}
-        </select> */}
-
-        {/* Parodyti pasirinktą vairuotoją */}
-        {/* {driverId && (
-          <div className="mt-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Pasirinktas vairuotojas: driverId {driverId}
-              Pasirinktas vairuotojas: {drivers.find(driver => driver.userId === driverId)?.name || "Nėra pasirinktas"}
-            </label>
-          </div>
-        )}
-      </div> */}
-
       {/* Render the corresponding page based on selected page */}
       {currentPage === "driver" && (
         <TransportationOrdersList
@@ -218,7 +188,7 @@ function App() {
       )}
 
       {currentPage === "createTransportation" && (
-        <CreateTransportationOrder
+        <TransportationOrderForm
           form={form}
           setForm={setForm}
           onBack={() => {
@@ -275,7 +245,7 @@ function App() {
           }}
           onBack={() => {
             setSelectedOrderId(null);
-            setCurrentPage("home");
+            setCurrentPage("driver");
           }}
           onSuccess={(deliveryTime) => {
             handleDeliveryTimeUpdate(selectedOrderId, deliveryTime);

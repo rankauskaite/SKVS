@@ -30,6 +30,10 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
     onNavigate("selectDeliveryTime", orderId, orderDate);
   }
 
+  const initiateTimeChange = async (orderId, orderDate) => {
+    onNavigate("selectDeliveryTime", orderId, orderDate);
+  }
+
   const confirmCancellation = async (orderId) => {
     const confirm = await Swal.fire({
       title: "Ar tikrai norite atšaukti rezervaciją?",
@@ -40,7 +44,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`/api/transportationorder/${orderId}/cancelDeliveryTime`, {
+      const res = await fetch(`/api/deliverytimemanagement/${orderId}/cancelDeliveryTime`, {
         method: "PUT",
       });
 
@@ -106,7 +110,14 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
               <td>{order.address}</td>
               <td>{order.deliveryTime ? new Date(order.deliveryTime).toLocaleDateString('lt-LT') : 'Nepaskirtas'}</td>
               <td>{order.ramp ?? '-'}</td>
-              <td>{order.deliveryTime ? `${new Date(order.deliveryTime).getHours()}:${new Date(order.deliveryTime).getMinutes()}` : '-'}</td>
+              <td>
+  {order.deliveryTime
+    ? (new Date(order.deliveryTime).getHours() === 0 && new Date(order.deliveryTime).getMinutes() === 0)
+      ? '-'
+      : `${new Date(order.deliveryTime).getHours().toString().padStart(2, '0')}:${new Date(order.deliveryTime).getMinutes().toString().padStart(2, '0')}`
+    : '-'}
+</td>
+
               {actor !== "driver" && (<><td>{order.state}</td><td>{order.isOnTheWay ? 'Taip' : 'Ne'}</td></>)}
               <td>{order.truckPlateNumber || '-'}</td>
               {actor === "driver" && (
@@ -117,7 +128,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
                 >
                   📋 Detalės
                 </button>
-                {!order.deliveryTime.Date ? (
+                {order.deliveryTime && new Date(order.deliveryTime).getHours() === 0 && new Date(order.deliveryTime).getMinutes() === 0 ? (
                   <button
                     className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
                     onClick={() => initiateTimeReservation(order.orderId, order.deliveryTime)}
@@ -128,7 +139,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
                   <>
                     <button
                       className="bg-yellow-500 text-white px-2 py-1 rounded text-sm"
-                      onClick={() => onNavigate("selectDeliveryTime", order.orderId)}
+                      onClick={() => initiateTimeChange(order.orderId, order.deliveryTime)}
                     >
                       ✏️ Keisti laiką
                     </button>

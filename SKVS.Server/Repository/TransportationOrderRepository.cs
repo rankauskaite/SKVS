@@ -25,6 +25,32 @@ namespace SKVS.Server.Repository
                 .Include(o => o.CreatedBy)
                 .FirstOrDefaultAsync(o => o.OrderId == id);
 
+        public async Task UpdateOrderDeliveryInformation(int id, DateTime deliveryTime, int ramp)
+        {
+            var order = await _context.TransportationOrders
+                                    .FirstOrDefaultAsync(o => o.OrderId == id);
+            if (order != null)
+            {
+                order.DeliveryTime = deliveryTime;
+                order.Ramp = ramp;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task CancelOrderDelivery(int id)
+        {
+            var order = await _context.TransportationOrders.FindAsync(id);
+            
+            if (order != null)
+            {
+                DateTime o = order.DeliveryTime.Date;
+                order.DeliveryTime = o;
+                order.Ramp = null;
+                _context.TransportationOrders.Update(order);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task AddAsync(TransportationOrder order)
         {
             _context.TransportationOrders.Add(order);
@@ -45,18 +71,6 @@ namespace SKVS.Server.Repository
                 _context.TransportationOrders.Remove(order);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public Task SaveOrderDeliveryInformation(int id, DateTime deliveryTime, int ramp)
-        {
-            var order = _context.TransportationOrders.Find(id);
-            if (order != null)
-            {
-                order.DeliveryTime = deliveryTime;
-                order.Ramp = ramp;
-                _context.SaveChangesAsync();
-            }
-            return Task.CompletedTask;
         }
     }
 }

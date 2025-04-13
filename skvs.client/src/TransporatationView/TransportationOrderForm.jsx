@@ -72,7 +72,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSelectDriver, onSe
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">➕ Naujas Transportation Order</h2>
+      <h2 className="text-xl font-bold mb-4">➕ Naujas pervežimo užsakymas</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           placeholder="Aprašymas"
@@ -89,21 +89,16 @@ function CreateTransportationOrder({ form, setForm, onBack, onSelectDriver, onSe
           value={form.deliveryTime}
           onChange={(e) => setForm(prev => ({ ...prev, deliveryTime: e.target.value }))}
         />
-        <input
-          type="number"
-          placeholder="Rampos numeris"
-          value={form.ramp}
-          onChange={(e) => setForm(prev => ({ ...prev, ramp: e.target.value }))}
-        />
 
         <select
           value={form.state}
           onChange={(e) => setForm(prev => ({ ...prev, state: e.target.value }))}
         >
-          <option value="Formed">Formed</option>
-          <option value="InProgress">InProgress</option>
-          <option value="Completed">Completed</option>
-          <option value="Cancelled">Cancelled</option>
+          <option value="Formed">Sudarytas</option>
+          <option value="Planed">Suplanuotas</option>
+          <option value="InProgress">Vykdomas</option>
+          <option value="Completed">Įvykdytas</option>
+          <option value="Cancelled">Atšauktas</option>
         </select>
 
         <div>
