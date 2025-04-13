@@ -34,6 +34,10 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
     onNavigate("selectDeliveryTime", orderId, orderDate);
   }
 
+  const initiateTransportationOrderCreation = () => {
+    onNavigate("createTransportation");
+  };
+
   const confirmCancellation = async (orderId) => {
     const confirm = await Swal.fire({
       title: "Ar tikrai norite atšaukti rezervaciją?",
@@ -76,7 +80,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors}) => {
         <div className="mt-4 flex gap-4">
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded"
-            onClick={() => onNavigate("createTransportation")}
+            onClick={initiateTransportationOrderCreation}
           >
             ➕ Naujas pervežimo užsakymas
           </button>
