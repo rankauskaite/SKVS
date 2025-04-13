@@ -4,7 +4,8 @@ import Swal from "sweetalert2";
 function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
   const [error, setError] = useState("");
 
-  const handleOrderToggle = (orderId) => {
+  // 11. selectWarehouseOrder() ir 12. chooseWarehouseOrder()
+  const selectWarehouseOrder = (orderId) => {
     const isSelected = form.warehouseOrderIds.includes(orderId);
     const updated = isSelected
         ? form.warehouseOrderIds.filter((id) => id !== orderId)
@@ -13,11 +14,49 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
     setForm((prev) => ({ ...prev, warehouseOrderIds: updated }));
   };
 
+  // 13. chooseDriver()
+  const chooseDriver = (e) => {
+    const selected = form.drivers.find((d) => d.userId === parseInt(e.target.value));
+    setForm((prev) => ({ ...prev, selectedDriver: selected || null }));
+  };
+
+  // 14. chooseTruck()
+  const chooseTruck = (e) => {
+    const selected = form.trucks.find((t) => t.plateNumber === e.target.value);
+    setForm((prev) => ({ ...prev, selectedTruck: selected || null }));
+  };
+
+  // 15. checkFormedTransportationOrder()
+  const checkFormedTransportationOrder = () => {
+    if (form.warehouseOrderIds.length === 0) {
+      setError("Pasirinkite bent vieną sandėlio užsakymą.");
+      return false;
+    }
+    if (!form.address) {
+      setError("Adresas yra privalomas.");
+      return false;
+    }
+    if (!form.deliveryTime) {
+      setError("Pristatymo laikas yra privalomas.");
+      return false;
+    }
+    if (!form.selectedDriver) {
+      setError("Pasirinkite vairuotoją.");
+      return false;
+    }
+    if (!form.selectedTruck) {
+      setError("Pasirinkite sunkvežimį.");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
+  // 16. createTransportationOrder() (siuntimas į serverį)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (form.warehouseOrderIds.length === 0) {
-      setError("Pasirinkite bent vieną sandėlio užsakymą.");
+    if (!checkFormedTransportationOrder()) {
       return;
     }
 
@@ -45,15 +84,18 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
       });
 
       if (response.ok) {
+        // 18. showSuccessMessage() ir 19. formMessage()
         Swal.fire("✅ Sukurta", "Pervežimo užsakymas sėkmingai sukurtas", "success");
         onSuccess();
       } else {
         const errText = await response.text();
         console.error("Klaida:", errText);
+        // 22. error()
         Swal.fire("❌ Klaida", "Nepavyko sukurti pervežimo užsakymo: " + errText, "error");
       }
     } catch (error) {
       console.error("Klaida:", error);
+      // 22. error()
       Swal.fire("❌ Klaida", "Nepavyko sukurti pervežimo užsakymo: tinklo klaida", "error");
     }
   };
@@ -101,12 +143,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
             <label className="block font-semibold">👨‍✈️ Pasirink vairuotoją:</label>
             <select
                 value={form.selectedDriver?.userId || ""}
-                onChange={(e) => {
-                  const selected = form.drivers.find(
-                      (d) => d.userId === e.target.value
-                  );
-                  setForm((prev) => ({ ...prev, selectedDriver: selected || null }));
-                }}
+                onChange={chooseDriver}
                 className="mt-1 p-2 border rounded w-full"
             >
               <option value="">-- Pasirinkti vairuotoją --</option>
@@ -123,12 +160,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
             <label className="block font-semibold">🚛 Pasirink vilkiką:</label>
             <select
                 value={form.selectedTruck?.plateNumber || ""}
-                onChange={(e) => {
-                  const selected = form.trucks.find(
-                      (t) => t.plateNumber === e.target.value
-                  );
-                  setForm((prev) => ({ ...prev, selectedTruck: selected || null }));
-                }}
+                onChange={chooseTruck}
                 className="mt-1 p-2 border rounded w-full"
             >
               <option value="">-- Pasirinkti vilkiką --</option>
@@ -151,7 +183,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
                       <input
                           type="checkbox"
                           checked={form.warehouseOrderIds.includes(wo.id)}
-                          onChange={() => handleOrderToggle(wo.id)}
+                          onChange={() => selectWarehouseOrder(wo.id)}
                       />
                       Užsakymas #{wo.id} – Kiekis: {wo.count}, Klientas ID: {wo.clientId}
                     </label>

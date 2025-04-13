@@ -20,7 +20,7 @@ function App() {
   const [driverId, setDriverId] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [selectedWarehouseOrder, setSelectedWarehouseOrder] = useState(null);
-  const [orders, setOrders] = useState([]); // Nauja būsena užsakymams
+  const [orders, setOrders] = useState([]);
   const [orderDate, setOrderDate] = useState(null);
 
   // Forma pervežimo užsakymui
@@ -40,15 +40,16 @@ function App() {
     warehouseOrders: [],
   });
 
-  // Užsakymų gavimas iš API
-  const fetchOrders = async () => {
+  // 20. initiateTransportationOrdersView()
+  const initiateTransportationOrdersView = async () => {
     try {
       const response = await fetch("/api/transportationorder");
       if (!response.ok) throw new Error("Nepavyko gauti užsakymų");
       const data = await response.json();
-      setOrders(data);
+      setOrders(data); // 21. show()
     } catch (err) {
       console.error("❌ Klaida gaunant užsakymus:", err);
+      // 22. error()
       Swal.fire("Klaida", "Nepavyko užkrauti užsakymų", "error");
     }
   };
@@ -68,7 +69,7 @@ function App() {
     };
 
     getDrivers();
-    fetchOrders(); // Gauname užsakymus įkeliant puslapį
+    initiateTransportationOrdersView();
   }, []);
 
   // Formos atstatymas
@@ -93,7 +94,7 @@ function App() {
     setSelectedDeliveryTime(null);
   };
 
-  // Formos duomenų gavimas
+  // 2. retrieveForm()
   const retrieveForm = async () => {
     try {
       const driversRes = await fetch("/api/drivers");
@@ -121,7 +122,7 @@ function App() {
     }
   };
 
-  // Formos duomenų nustatymas
+  // 9. provideForm()
   const provideForm = (formData) => {
     if (formData) {
       setForm((prev) => ({
@@ -132,6 +133,15 @@ function App() {
       }));
       setCurrentPage("createTransportation");
     }
+  };
+
+  // 1. initiateTransportationOrderCreation()
+  const initiateTransportationOrderCreation = () => {
+    retrieveForm().then((formData) => {
+      if (formData) {
+        provideForm(formData);
+      }
+    });
   };
 
   // Navigacijos valdymas
@@ -145,11 +155,7 @@ function App() {
       setCurrentPage(page);
     }
     if (page === "createTransportation") {
-      retrieveForm().then((formData) => {
-        if (formData) {
-          provideForm(formData);
-        }
-      });
+      initiateTransportationOrderCreation();
     } else {
       setCurrentPage(page);
     }
@@ -247,7 +253,7 @@ function App() {
                 actor={currentPage}
                 actorId={1}
                 actors={drivers}
-                orders={orders} // Perduodame užsakymus
+                orders={orders}
                 onCancelDeliveryTime={handleCancelDeliveryTime}
             />
         )}
@@ -258,7 +264,7 @@ function App() {
                 actor={currentPage}
                 actorId={1}
                 actors={drivers}
-                orders={orders} // Perduodame užsakymus
+                orders={orders}
                 onCancelDeliveryTime={handleCancelDeliveryTime}
             />
         )}
@@ -288,7 +294,7 @@ function App() {
                 onSuccess={() => {
                   resetForm();
                   setCurrentPage("home");
-                  fetchOrders(); // Atnaujiname užsakymų sąrašą
+                  initiateTransportationOrdersView();
                 }}
             />
         )}
