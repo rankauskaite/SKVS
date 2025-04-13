@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using SKVS.Server.Data;
 using SKVS.Server.Enums;
 using SKVS.Server.Models;
-using System.Text.Json;
 
 namespace SKVS.Server.Controllers
 {
@@ -18,8 +17,9 @@ namespace SKVS.Server.Controllers
             _context = context;
         }
 
+        // 20. initiateTransportationOrdersView() ir 21. show()
         [HttpGet]
-        public async Task<IActionResult> InitializeTransportationOrders([FromQuery] int? userId)
+        public async Task<IActionResult> initiateTransportationOrdersView([FromQuery] int? userId)
         {
             try
             {
@@ -37,12 +37,12 @@ namespace SKVS.Server.Controllers
                     .Include(t => t.Truck)
                     .ToListAsync();
 
-                return Ok(orders);
+                return Ok(orders); // 21. show()
             }
             catch (Exception ex)
             {
                 Console.WriteLine("❌ Klaida gaunant užsakymus: " + ex.Message);
-                return StatusCode(500, "Serverio klaida: " + ex.Message);
+                return StatusCode(500, "Serverio klaida: " + ex.Message); // 22. error()
             }
         }
 
@@ -56,51 +56,76 @@ namespace SKVS.Server.Controllers
             return order == null ? NotFound() : Ok(order);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TransportationOrderInputModel input)
+        // 15. checkFormedTransportationOrder()
+        private IActionResult checkFormedTransportationOrder(TransportationOrderInputModel input)
         {
-            Console.WriteLine($"Gautas JSON: {JsonSerializer.Serialize(input)}");
-            Console.WriteLine($"Gauta input.Ramp reikšmė: {input.Ramp ?? null}");
+            if (string.IsNullOrEmpty(input.Address))
+                return BadRequest("Adresas yra privalomas.");
+            if (input.DeliveryTime == default)
+                return BadRequest("Pristatymo laikas yra privalomas.");
+            if (input.AssignedDriverId == null)
+                return BadRequest("Vairuotojas yra privalomas.");
+            if (string.IsNullOrEmpty(input.TruckPlateNumber))
+                return BadRequest("Sunkvežimis yra privalomas.");
+            if (!input.WarehouseOrderIds.Any())
+                return BadRequest("Pasirinkite bent vieną sandėlio užsakymą.");
 
-            if (input.Ramp.HasValue && input.Ramp <= 0)
+            return null;
+        }
+
+        // 16. createTransportationOrder() ir 17. transportationOrderCreated()
+        [HttpPost]
+        public async Task<IActionResult> createTransportationOrder([FromBody] TransportationOrderInputModel input)
+        {
+            try
             {
-                return BadRequest("Rampa turi būti teigiamas skaičius.");
+                // 15. Tikriname formą
+                var validationResult = checkFormedTransportationOrder(input);
+                if (validationResult != null)
+                    return validationResult;
+
+                var order = new TransportationOrder
+                {
+                    Description = input.Description,
+                    Address = input.Address,
+                    DeliveryTime = input.DeliveryTime,
+                    Ramp = input.Ramp,
+                    State = input.State,
+                    IsCancelled = input.IsCancelled,
+                    IsCompleted = input.IsCompleted,
+                    IsOnTheWay = input.IsOnTheWay,
+                    CreatedById = input.CreatedById,
+                    AssignedDriverId = input.AssignedDriverId,
+                    TruckPlateNumber = input.TruckPlateNumber
+                };
+
+                _context.TransportationOrders.Add(order);
+                await _context.SaveChangesAsync();
+
+                var warehouseOrders = await _context.WarehouseOrders
+                    .Where(w => input.WarehouseOrderIds.Contains(w.Id))
+                    .ToListAsync();
+
+                if (!warehouseOrders.Any())
+                {
+                    return BadRequest("Nerasta pasirinktų sandėlio užsakymų.");
+                }
+
+                foreach (var wo in warehouseOrders)
+                {
+                    wo.TransportationOrderID = order.OrderId;
+                    _context.Entry(wo).State = EntityState.Modified;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(Get), new { id = order.OrderId }, order); // 17. transportationOrderCreated()
             }
-
-            var order = new TransportationOrder
+            catch (Exception ex)
             {
-                Description = input.Description,
-                Address = input.Address,
-                DeliveryTime = input.DeliveryTime,
-                Ramp = input.Ramp,
-                State = input.State,
-                IsCancelled = input.IsCancelled,
-                IsCompleted = input.IsCompleted,
-                IsOnTheWay = input.IsOnTheWay,
-                CreatedById = input.CreatedById,
-                TruckPlateNumber = input.TruckPlateNumber
-            };
-
-            Console.WriteLine($"Priskirta order.Ramp reikšmė: {order.Ramp ?? null}");
-
-            _context.TransportationOrders.Add(order);
-            await _context.SaveChangesAsync();
-
-            Console.WriteLine($"Išsaugota DB order.Ramp reikšmė: {order.Ramp ?? null}");
-
-            var warehouseOrders = await _context.WarehouseOrders
-                .Where(w => input.WarehouseOrderIds.Contains(w.Id))
-                .ToListAsync();
-
-            foreach (var wo in warehouseOrders)
-            {
-                wo.TransportationOrderID = order.OrderId;
-                _context.Entry(wo).State = EntityState.Modified;
+                Console.WriteLine("❌ Klaida kuriant užsakymą: " + ex.Message);
+                return StatusCode(500, "Serverio klaida kuriant užsakymą: " + ex.Message); // 22. error()
             }
-
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(Get), new { id = order.OrderId }, order);
         }
 
         [HttpPut("{id}")]

@@ -25,32 +25,36 @@ namespace SKVS.Server.Controllers
             _repositoryWarehouseOrder = repositoryWarehouseOrder;
         }
 
+        // 3. getDrivers() ir 4. driverList()
         [HttpGet("/api/drivers")]
         public async Task<IActionResult> getDrivers()
         {
             var drivers = await _repositoryDriver.GetDrivers();
 
-            var result = drivers.Select(d => new
+            var driverList = drivers.Select(d => new
             {
                 d.UserId,
                 d.Name,
                 d.Surname
             });
 
-            return Ok(result);
+            return Ok(driverList);
         }
 
+        // 5. getTrucks() ir 6. truckList()
         [HttpGet("/api/trucks")]
-        public async Task<IActionResult> getTrucks() =>
-            Ok(await _repositoryTruck.GetAllAsync());
-
-
-        [HttpGet("/api/available/warehouseOrders")]
-        public async Task<IActionResult> GetAvailable()
+        public async Task<IActionResult> getTrucks()
         {
-            var availableOrders = await _repositoryWarehouseOrder.GetUnassignedAsync(); // turi būti įgyvendinta repozitorijoje
-            return Ok(availableOrders);
+            var truckList = await _repositoryTruck.GetAllAsync();
+            return Ok(truckList);
         }
 
+        // 7. getWarehouseOrders() ir 8. warehouseOrderList()
+        [HttpGet("/api/available/warehouseOrders")]
+        public async Task<IActionResult> getWarehouseOrders()
+        {
+            var warehouseOrderList = await _repositoryWarehouseOrder.GetUnassignedAsync();
+            return Ok(warehouseOrderList);
+        }
     }
 }
