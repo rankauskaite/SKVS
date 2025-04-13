@@ -13,15 +13,20 @@ namespace SKVS.Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IDriverRepository _repositoryDriver;
+        private readonly ITruckRepository _repositoryTruck;
+        private readonly IWarehouseOrderRepository _repositoryWarehouseOrder;
 
-        public TransportationOrderFormController(ApplicationDbContext context, IDriverRepository repositoryDriver)
+        public TransportationOrderFormController(ApplicationDbContext context, IDriverRepository repositoryDriver, ITruckRepository repositoryTruck,
+        IWarehouseOrderRepository repositoryWarehouseOrder)
         {
             _context = context;
             _repositoryDriver = repositoryDriver;
+            _repositoryTruck = repositoryTruck;
+            _repositoryWarehouseOrder = repositoryWarehouseOrder;
         }
 
-        [HttpGet("{drivers}")]
-        public async Task<IActionResult> GetDrivers()
+        [HttpGet("/api/drivers")]
+        public async Task<IActionResult> getDrivers()
         {
             var drivers = await _repositoryDriver.GetDrivers();
 
@@ -34,7 +39,18 @@ namespace SKVS.Server.Controllers
 
             return Ok(result);
         }
-    }
 
-    
+        [HttpGet("/api/trucks")]
+        public async Task<IActionResult> getTrucks() =>
+            Ok(await _repositoryTruck.GetAllAsync());
+
+
+        [HttpGet("/api/available/warehouseOrders")]
+        public async Task<IActionResult> GetAvailable()
+        {
+            var availableOrders = await _repositoryWarehouseOrder.GetUnassignedAsync(); // turi būti įgyvendinta repozitorijoje
+            return Ok(availableOrders);
+        }
+
+    }
 }

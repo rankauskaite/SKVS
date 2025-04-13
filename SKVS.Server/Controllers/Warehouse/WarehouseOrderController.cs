@@ -62,7 +62,7 @@ namespace SKVS.Server.Controllers
         }
 
         // 🔥 NAUJAS ENDPOINTAS: Nepriskirti (laisvi) warehouse orderiai
-        [HttpGet("available")]
+        [HttpGet("availablee")]
         public async Task<IActionResult> GetAvailable()
         {
             var availableOrders = await _repository.GetUnassignedAsync(); // turi būti įgyvendinta repozitorijoje
