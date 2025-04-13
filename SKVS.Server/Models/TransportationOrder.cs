@@ -27,7 +27,7 @@ namespace SKVS.Server.Models
         public DateTime DeliveryTime { get; set; }
 
         [Column("ramp")]
-        public int Ramp { get; set; }
+        public int? Ramp { get; set; }
 
         [Column("isCompleted")]
         public bool IsCompleted { get; set; } = false;

@@ -15,15 +15,22 @@ namespace SKVS.Server.Controllers
         public TransportationOrderController(ApplicationDbContext context)
         {
             _context = context;
-        } 
-
+        }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> InitializeTransportationOrders([FromQuery] int? userId)
         {
             try
             {
-                var orders = await _context.TransportationOrders
+                var query = _context.TransportationOrders.AsQueryable();
+
+                if (userId.HasValue)
+                {
+                    // Filtruojame pagal vairuotojo ID, jeigu aktorius yra "driver"
+                    query = query.Where(o => o.AssignedDriverId == userId.Value);
+                }
+
+                var orders = await query
                     .Include(t => t.WarehouseOrders)
                     .Include(t => t.CreatedBy)
                     .Include(t => t.AssignedDriver)
@@ -37,112 +44,20 @@ namespace SKVS.Server.Controllers
                 Console.WriteLine("❌ Klaida gaunant užsakymus: " + ex.Message);
                 return StatusCode(500, "Serverio klaida: " + ex.Message);
             }
-        } 
-
-        [HttpPut("{orderId}/setDeliveryTime")]
-        public async Task<IActionResult> SetDeliveryTime(int orderId, [FromBody] DeliveryTimeUpdateModel model)
-        {
-            try
-            {
-                // 1. Gauti užsakymą
-                var order = await _context.TransportationOrders.FindAsync(orderId);
-                if (order == null)
-                {
-                    return NotFound("❌ Užsakymas nerastas.");
-                }
-
-                // 2. Patikrinti ar toks pristatymo laikas egzistuoja (checkSelectedTime)
-                var deliveryTime = await _context.AvailableDeliveryTimes.FindAsync(model.DeliveryTimeId);
-                if (deliveryTime == null)
-                {
-                    return BadRequest("⚠️ Pasirinktas laikas neegzistuoja.");
-                }
-
-                // 3. Atnaujinti užsakymą (updateOrderDeliveryInformation)
-                order.DeliveryTimeId = model.DeliveryTimeId;
-
-                // 4. Išsaugoti (delivery information saved)
-                await _context.SaveChangesAsync();
-
-                // 5. Sukurti žinutę (formMessage) – čia paprasta sėkmės žinutė
-                var successMessage = $"✅ Pristatymo laikas priskirtas: {deliveryTime.Date.ToShortDateString()} {deliveryTime.Time}";
-
-                // 6. Inicijuoti užsakymų sąrašo atnaujinimą (initializeTransportationOrders)
-                var updatedOrders = await _context.TransportationOrders
-                    .Include(t => t.WarehouseOrders)
-                    .Include(t => t.CreatedBy)
-                    .Include(t => t.AssignedDriver)
-                    .Include(t => t.Truck)
-                    .ToListAsync();
-
-                // 7. Grąžinti sėkmingą atsakymą
-                return Ok(new
-                {
-                    message = successMessage,
-                    updatedOrders
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("❌ Klaida keičiant laiką: " + ex.Message);
-                return StatusCode(500, "❌ Serverio klaida: " + ex.Message);
-            }
         }
 
-        public class DeliveryTimeUpdateModel
-        {
-            public int DeliveryTimeId { get; set; }
-        } 
 
-        [HttpPut("{orderId}/changeDeliveryTime")]
-        public async Task<IActionResult> ChangeDeliveryTime(int orderId, [FromBody] DeliveryTimeUpdateModel model)
-        {
-            try
-            {
-                var order = await _context.TransportationOrders.FindAsync(orderId);
-                if (order == null)
-                    return NotFound("Užsakymas nerastas");
 
-                var newTime = await _context.AvailableDeliveryTimes.FindAsync(model.DeliveryTimeId);
-                if (newTime == null)
-                    return BadRequest("Tokio pristatymo laiko nėra");
 
-                order.DeliveryTimeId = model.DeliveryTimeId;
-                await _context.SaveChangesAsync();
 
-                return Ok(new { message = "✅ Rezervacijos laikas sėkmingai pakeistas" });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("❌ Klaida keičiant rezervacijos laiką: " + ex.Message);
-                return StatusCode(500, "Serverio klaida: " + ex.Message);
-            }
-        } 
 
-        [HttpPut("{orderId}/cancelDeliveryTime")]
-        public async Task<IActionResult> CancelDeliveryTime(int orderId)
-        {
-            try
-            {
-                var order = await _context.TransportationOrders.FindAsync(orderId);
-                if (order == null)
-                    return NotFound("Užsakymas nerastas");
 
-                if (order.DeliveryTimeId == null)
-                    return BadRequest("Užsakymas neturi priskirto pristatymo laiko");
 
-                // Atšaukiam laiką
-                order.DeliveryTimeId = null;
-                await _context.SaveChangesAsync();
 
-                return Ok(new { message = "✅ Pristatymo rezervacija atšaukta" });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("❌ Klaida atšaukiant laiką: " + ex.Message);
-                return StatusCode(500, "Serverio klaida: " + ex.Message);
-            }
-        }
+
+
+
+        
 
 
 
@@ -168,7 +83,7 @@ namespace SKVS.Server.Controllers
                 Description = input.Description,
                 Address = input.Address,
                 DeliveryTime = input.DeliveryTime,
-                Ramp = input.Ramp,
+                Ramp = null,
                 State = input.State,
                 IsCancelled = input.IsCancelled,
                 IsCompleted = input.IsCompleted,
