@@ -17,5 +17,11 @@ namespace SKVS.Server.Models
         [JsonIgnore]
         public List<Truck> Trucks { get; set; } = new();
 
+        [Column("TruckingCompanyName")]
+        public string TruckingCompanyName { get; set; } = null!;
+
+        [JsonIgnore]
+        public List<WarehouseOrder> WarehouseOrders { get; set; } = new();
+
     }
 }

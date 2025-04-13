@@ -59,5 +59,28 @@ namespace SKVS.Server.Controllers
             var availableOrders = await _repository.GetUnassignedAsync(); // turi būti įgyvendinta repozitorijoje
             return Ok(availableOrders);
         }
+        [HttpGet("getCurrentOrderInfo")]
+        public async Task<IActionResult> GetCurrentOrderInfo()
+        {
+            return Ok();
+
+        }
+
+        [HttpPut("{id}/settruckingcompany")]
+        public async Task<IActionResult> AssignTruckingCompany(int id, [FromBody] SetTruckingCompanyRequest request)
+        {
+            var order = await _repository.GetByIdAsync(id);
+            if (order == null) return NotFound();
+
+            order.TruckingCompanyUserId = request.UserId;
+            await _repository.UpdateAsync(order);
+
+            return Ok();
+        }
+
+        public class SetTruckingCompanyRequest
+        {
+            public int? UserId { get; set; }
+        }
     }
 }

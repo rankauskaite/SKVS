@@ -36,5 +36,12 @@ namespace SKVS.Server.Models
         [ForeignKey("ClientId")] 
         [JsonIgnore]
         public SVS? Client { get; set; }
+
+        [Column("truckingCompanyUserId")]
+        public int? TruckingCompanyUserId { get; set; }
+
+        [ForeignKey("TruckingCompanyUserId")]
+        [JsonIgnore]
+        public TruckingCompanyManager? TruckingCompanyManager { get; set; }
     }
 }
