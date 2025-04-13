@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const getDrivers = async () => {
       try {
-        const res = await fetch("/api/transportationorderform/drivers");
+        const res = await fetch("/api/drivers");
         if (!res.ok) throw new Error("Nepavyko gauti vairuotojų");
         const data = await res.json();
         setDrivers(data);
