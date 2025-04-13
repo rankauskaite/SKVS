@@ -97,12 +97,13 @@ const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, o
 			<table className='orders-table'>
 				<thead>
 					<tr>
-						<th>Order ID</th>
-						<th>Client</th>
-						<th>Order Date</th>
-						<th>Delivery Date</th>
-						<th>Count</th>
-						<th>Transportation Order ID</th>
+						<th>Užsakymo ID</th>
+						<th>Klientas</th>
+						<th>Užsakymo data</th>
+						<th>Pristatymo data</th>
+						<th>Kiekis</th>
+						<th>Svoris(Kg)</th>
+						<th>Transporto užsakymo ID</th>
 						<th>Transporto įmonė</th>
 						<th>Veiksmai</th>
 					</tr>
@@ -115,6 +116,7 @@ const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, o
 							<td>{new Date(order.orderDate).toLocaleString()}</td>
 							<td>{new Date(order.deliveryDate).toLocaleString()}</td>
 							<td>{order.count}</td>
+							<td>{order.weight}</td>
 							<td>{order.transportationOrderID ?? '-'}</td>
 							<td>
 								<select
@@ -148,7 +150,7 @@ const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, o
 								>
 									✏️ Redaguoti užsakymą
 								</button>
-								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => {}}>
+								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => onNavigate('CheckOrderValidity', order)}>
 									🔎 Patikrinti krovinį
 								</button>
 								<button
