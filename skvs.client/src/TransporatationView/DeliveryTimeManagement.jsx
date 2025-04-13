@@ -58,7 +58,7 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
         html: `
           <p><strong>Data:</strong> ${selectedTime.date.split("T")[0]}</p>
           <p><strong>Laikas:</strong> ${selectedTime.time / 60}:00</p>
-          <p><strong>Ramp:</strong> ${selectedTime.ramp}</p>
+          <p><strong>Rampa:</strong> ${selectedTime.ramp}</p>
         `,
         icon: "success",
         timer: 2000,
@@ -70,10 +70,10 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
         // Grįžtame atgal į ankstesnį puslapį
         onBack();
         
-        // Galite atlikti papildomą sėkmės apdorojimą, jei reikia
-        if (typeof onSuccess === "function") {
-          onSuccess(selectedTime);
-        }
+        // // Galite atlikti papildomą sėkmės apdorojimą, jei reikia
+        // if (typeof onSuccess === "function") {
+        //   onSuccess(selectedTime);
+        // }
       }, 2000); // 2000 ms (2 sekundės) – tiek laiko rodomas sėkmės pranešimas
     } catch (error) {
       console.error("❌ Klaida siunčiant laiką:", error);
@@ -107,7 +107,7 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
                   className="mr-2"
                 />
                 <span>
-                  {t.date.split("T")[0]} {t.time/60}:00  – Ramp: {t.ramp}
+                  {t.date.split("T")[0]} {t.time/60}:00  – Rampa: {t.ramp}
                 </span>
               </label>
             </li>

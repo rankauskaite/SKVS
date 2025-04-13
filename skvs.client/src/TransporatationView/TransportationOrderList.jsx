@@ -71,6 +71,14 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
     }
   };
 
+  const stateLabelsLt = {
+    Formed: "Sudarytas",
+    Scheduled: "Suplanuotas",
+    InProgress: "Vykdomas",
+    Completed: "Įvykdytas",
+    Cancelled: "Atšauktas"
+  };
+
   if (orders.length === 0)
     return (
         <div className="full-page-center">
@@ -111,6 +119,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
                 <>
                   <th>Būsena</th>
                   <th>Pakeliui</th>
+                  <th>Vairuotojas</th>
                 </>
             )}
             <th>Sunkvežimio numeris</th>
@@ -145,8 +154,13 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
                 </td>
                 {actor !== "driver" && (
                     <>
-                      <td>{order.state}</td>
+                      <td>{stateLabelsLt[order.state] || order.state}</td>
                       <td>{order.isOnTheWay ? "Taip" : "Ne"}</td>
+                      <td>
+                        {order.assignedDriverId
+                            ? `${actors.find((driver) => driver.userId === order.assignedDriverId)?.name} ${actors.find((driver) => driver.userId === order.assignedDriverId)?.surname}`
+                            : "Nėra"}
+                      </td>
                     </>
                 )}
                 <td>{order.truckPlateNumber || "-"}</td>

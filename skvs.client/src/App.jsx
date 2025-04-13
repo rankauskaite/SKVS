@@ -5,19 +5,13 @@ import TransportationOrdersList from "./TransporatationView/TransportationOrderL
 import TransportationOrderForm from "./TransporatationView/TransportationOrderForm";
 import WarehouseOrderForm from "./WareHouseView/WarehouseOrderForm";
 import WarehouseOrderList from "./WareHouseView/WarehouseOrderList";
-import SelectDriverPage from "./TransporatationView/SelectDriverPage";
-import SelectTruckPage from "./TransporatationView/SelectTruckPage";
 import DeliveryTimeManagement from "./TransporatationView/DeliveryTimeManagement";
 import WarehouseOrder from "./WareHouseView/WarehouseOrder";
 
 function App() {
   // Būsenos
   const [currentPage, setCurrentPage] = useState("home");
-  const [selectedDriver, setSelectedDriver] = useState(null);
-  const [selectedTruck, setSelectedTruck] = useState(null);
-  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [driverId, setDriverId] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [selectedWarehouseOrder, setSelectedWarehouseOrder] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -89,9 +83,6 @@ function App() {
       trucks: [],
       warehouseOrders: [],
     });
-    setSelectedDriver(null);
-    setSelectedTruck(null);
-    setSelectedDeliveryTime(null);
   };
 
   // 2. retrieveForm()
@@ -286,43 +277,13 @@ function App() {
                 setForm={setForm}
                 onBack={() => {
                   resetForm();
-                  setCurrentPage("home");
-                }}
-                onSelectDriver={() => setCurrentPage("selectDriver")}
-                onSelectTruck={() => setCurrentPage("selectTruck")}
-                onSelectDeliveryTime={() => setCurrentPage("selectDeliveryTime")}
-                onSuccess={() => {
-                  resetForm();
-                  setCurrentPage("home");
-                  initiateTransportationOrdersView();
+                  setCurrentPage("truckCompany");
                 }}
             />
         )}
 
         {currentPage === "createWarehouse" && (
             <WarehouseOrderForm onBack={() => setCurrentPage("home")} />
-        )}
-
-        {currentPage === "selectDriver" && (
-            <SelectDriverPage
-                onSelect={(driver) => {
-                  setSelectedDriver(driver);
-                  setForm((prev) => ({ ...prev, selectedDriver: driver }));
-                  setCurrentPage("createTransportation");
-                }}
-                onBack={() => setCurrentPage("createTransportation")}
-            />
-        )}
-
-        {currentPage === "selectTruck" && (
-            <SelectTruckPage
-                onSelect={(truck) => {
-                  setSelectedTruck(truck);
-                  setForm((prev) => ({ ...prev, selectedTruck: truck }));
-                  setCurrentPage("createTransportation");
-                }}
-                onBack={() => setCurrentPage("createTransportation")}
-            />
         )}
 
         {currentPage === "CheckOrderValidity" && selectedWarehouseOrder && (
@@ -354,24 +315,6 @@ function App() {
                   handleDeliveryTimeUpdate(selectedOrderId, deliveryTime);
                   setSelectedOrderId(null);
                   setCurrentPage("home");
-
-                  Swal.fire({
-                    title: "✅ Laikas priskirtas!",
-                    html: `
-                <p><strong>Data:</strong> ${new Date(
-                        deliveryTime.date
-                    ).toLocaleDateString()}</p>
-                <p><strong>Laikas:</strong> ${String(
-                        deliveryTime.time?.hours
-                    ).padStart(2, "0")}:${String(
-                        deliveryTime.time?.minutes
-                    ).padStart(2, "0")}</p>
-                <p><strong>Ramp:</strong> ${deliveryTime.ramp}</p>
-              `,
-                    icon: "success",
-                    timer: 3000,
-                    showConfirmButton: false,
-                  });
                 }}
             />
         )}
