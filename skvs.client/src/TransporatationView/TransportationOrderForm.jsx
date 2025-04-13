@@ -24,7 +24,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
 
   const fetchDrivers = async () => {
     try {
-      const response = await fetch("/api/driver");
+      const response = await fetch("/api/drivers");
       const data = await response.json();
       setDrivers(data);
     } catch (error) {
@@ -34,7 +34,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
 
   const fetchTrucks = async () => {
     try {
-      const response = await fetch("/api/truck");
+      const response = await fetch("/api/trucks");
       const data = await response.json();
       setTrucks(data);
     } catch (error) {

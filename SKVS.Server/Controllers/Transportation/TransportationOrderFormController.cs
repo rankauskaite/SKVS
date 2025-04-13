@@ -13,14 +13,17 @@ namespace SKVS.Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IDriverRepository _repositoryDriver;
+        private readonly ITruckRepository _repositoryTruck;
 
-        public TransportationOrderFormController(ApplicationDbContext context, IDriverRepository repositoryDriver)
+        public TransportationOrderFormController(ApplicationDbContext context, IDriverRepository repositoryDriver, ITruckRepository repositoryTruck)
         {
             _context = context;
             _repositoryDriver = repositoryDriver;
+            _repositoryTruck = repositoryTruck;
+
         }
 
-        [HttpGet("{drivers}")]
+        [HttpGet("/api/drivers")]
         public async Task<IActionResult> GetDrivers()
         {
             var drivers = await _repositoryDriver.GetDrivers();
@@ -34,7 +37,10 @@ namespace SKVS.Server.Controllers
 
             return Ok(result);
         }
-    }
 
-    
+        [HttpGet("/api/trucks")]
+        public async Task<IActionResult> GetTrucks() =>
+            Ok(await _repositoryTruck.GetAllAsync());
+
+    }
 }
