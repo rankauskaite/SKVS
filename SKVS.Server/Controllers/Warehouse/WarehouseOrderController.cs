@@ -9,10 +9,12 @@ namespace SKVS.Server.Controllers
     public class WarehouseOrderController : ControllerBase
     {
         private readonly IWarehouseOrderRepository _repository;
+        private readonly ITruckingCompanyManagerRepository _repositoryTruckingCompanyManager;
 
-        public WarehouseOrderController(IWarehouseOrderRepository repository)
+        public WarehouseOrderController(IWarehouseOrderRepository repository, ITruckingCompanyManagerRepository repositoryTruckingCompanyManager)
         {
             _repository = repository;
+            _repositoryTruckingCompanyManager = repositoryTruckingCompanyManager;
         }
 
         [HttpGet]
@@ -20,6 +22,13 @@ namespace SKVS.Server.Controllers
         {
             var orders = await _repository.GetAllAsync();
             return Ok(orders);
+        }
+
+        [HttpGet("truckingcompanies")]
+        public async Task<IActionResult> GetTruckingCompanies()
+        {
+            var truckingCompanies = await _repositoryTruckingCompanyManager.GetAllAsync();
+            return Ok(truckingCompanies);
         }
 
         [HttpGet("{id}")]
@@ -45,11 +54,11 @@ namespace SKVS.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/cancel")]
         public async Task<IActionResult> Delete(int id)
         {
             await _repository.DeleteAsync(id);
-            return NoContent();
+            return Ok();
         }
 
         // 🔥 NAUJAS ENDPOINTAS: Nepriskirti (laisvi) warehouse orderiai
@@ -60,7 +69,7 @@ namespace SKVS.Server.Controllers
             return Ok(availableOrders);
         }
         [HttpGet("getCurrentOrderInfo")]
-        public async Task<IActionResult> GetCurrentOrderInfo()
+        public IActionResult GetCurrentOrderInfo()
         {
             return Ok();
 
