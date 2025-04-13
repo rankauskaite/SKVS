@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SKVS.Server.Data;
 using SKVS.Server.Enums;
 using SKVS.Server.Models;
+using System.Text.Json;
 
 namespace SKVS.Server.Controllers
 {
@@ -26,7 +27,6 @@ namespace SKVS.Server.Controllers
 
                 if (userId.HasValue)
                 {
-                    // Filtruojame pagal vairuotojo ID, jeigu aktorius yra "driver"
                     query = query.Where(o => o.AssignedDriverId == userId.Value);
                 }
 
@@ -46,24 +46,6 @@ namespace SKVS.Server.Controllers
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -74,16 +56,23 @@ namespace SKVS.Server.Controllers
             return order == null ? NotFound() : Ok(order);
         }
 
-        // tik POST dalis, pilnas failas jau pas tave geras
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TransportationOrderInputModel input)
         {
+            Console.WriteLine($"Gautas JSON: {JsonSerializer.Serialize(input)}");
+            Console.WriteLine($"Gauta input.Ramp reikšmė: {input.Ramp ?? null}");
+
+            if (input.Ramp.HasValue && input.Ramp <= 0)
+            {
+                return BadRequest("Rampa turi būti teigiamas skaičius.");
+            }
+
             var order = new TransportationOrder
             {
                 Description = input.Description,
                 Address = input.Address,
                 DeliveryTime = input.DeliveryTime,
-                Ramp = null,
+                Ramp = input.Ramp,
                 State = input.State,
                 IsCancelled = input.IsCancelled,
                 IsCompleted = input.IsCompleted,
@@ -92,8 +81,12 @@ namespace SKVS.Server.Controllers
                 TruckPlateNumber = input.TruckPlateNumber
             };
 
+            Console.WriteLine($"Priskirta order.Ramp reikšmė: {order.Ramp ?? null}");
+
             _context.TransportationOrders.Add(order);
-            await _context.SaveChangesAsync(); // ❗️orderID sugeneruojamas čia
+            await _context.SaveChangesAsync();
+
+            Console.WriteLine($"Išsaugota DB order.Ramp reikšmė: {order.Ramp ?? null}");
 
             var warehouseOrders = await _context.WarehouseOrders
                 .Where(w => input.WarehouseOrderIds.Contains(w.Id))
@@ -105,11 +98,10 @@ namespace SKVS.Server.Controllers
                 _context.Entry(wo).State = EntityState.Modified;
             }
 
-            await _context.SaveChangesAsync(); // ❗️ išsaugom warehouse orders
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Get), new { id = order.OrderId }, order);
         }
-
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TransportationOrderInputModel input)
@@ -121,7 +113,6 @@ namespace SKVS.Server.Controllers
             if (existing == null)
                 return NotFound();
 
-            // Atnaujinti pagrindinius laukus
             existing.Description = input.Description;
             existing.Address = input.Address;
             existing.DeliveryTime = input.DeliveryTime;
@@ -133,14 +124,12 @@ namespace SKVS.Server.Controllers
             existing.CreatedById = input.CreatedById;
             existing.TruckPlateNumber = input.TruckPlateNumber;
 
-            // 1. Nuimam senus ryšius
             foreach (var old in existing.WarehouseOrders)
             {
                 old.TransportationOrderID = null;
                 _context.Entry(old).State = EntityState.Modified;
             }
 
-            // 2. Priskiriam naujus
             var newWarehouseOrders = await _context.WarehouseOrders
                 .Where(w => input.WarehouseOrderIds.Contains(w.Id))
                 .ToListAsync();
@@ -168,7 +157,6 @@ namespace SKVS.Server.Controllers
             if (existing == null)
                 return NotFound();
 
-            // Atlaisvinam warehouse orderius
             foreach (var wo in existing.WarehouseOrders)
             {
                 wo.TransportationOrderID = null;
@@ -179,7 +167,7 @@ namespace SKVS.Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }  
+        }
 
         [HttpPut("{id}/driver")]
         public async Task<IActionResult> AssignDriver(int id, [FromBody] AssignDriverRequest model)
@@ -187,11 +175,9 @@ namespace SKVS.Server.Controllers
             var order = await _context.TransportationOrders.FindAsync(id);
             if (order == null) return NotFound();
 
-            // Patikrinti ar toks vairuotojas egzistuoja
             var driver = await _context.Drivers.FindAsync(model.DriverId);
             if (driver == null) return BadRequest("Vairuotojas nerastas");
 
-            // Priskirti vairuotoją
             order.AssignedDriverId = model.DriverId;
             _context.Entry(order).State = EntityState.Modified;
 
@@ -204,26 +190,19 @@ namespace SKVS.Server.Controllers
             public int DriverId { get; set; }
         }
 
-
-
-        
-
-        // ✅ Vidinė klasė tik Create / Update POST requestams
         public class TransportationOrderInputModel
         {
             public string Description { get; set; } = string.Empty;
             public string Address { get; set; } = string.Empty;
             public DateTime DeliveryTime { get; set; }
-            public int Ramp { get; set; }
+            public int? Ramp { get; set; }
             public bool IsCancelled { get; set; } = false;
             public bool IsCompleted { get; set; } = false;
             public bool IsOnTheWay { get; set; } = false;
-            public int CreatedById { get; set; } 
+            public int CreatedById { get; set; }
             public int? AssignedDriverId { get; set; }
             public string? TruckPlateNumber { get; set; }
-            public OrderState State { get; set; } 
-
-
+            public OrderState State { get; set; }
             public List<int> WarehouseOrderIds { get; set; } = new();
         }
     }

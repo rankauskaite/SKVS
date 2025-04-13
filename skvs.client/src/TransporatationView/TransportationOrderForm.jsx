@@ -23,8 +23,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
     const body = {
       description: form.description,
       address: form.address,
-      deliveryTime: form.deliveryTime,
-      ramp: parseInt(form.ramp),
+      deliveryTime: form.deliveryTime || null,
       state: form.state,
       isCancelled: false,
       isCompleted: false,
@@ -34,6 +33,8 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
       truckPlateNumber: form.selectedTruck?.plateNumber ?? null,
       warehouseOrderIds: form.warehouseOrderIds,
     };
+
+    console.log("Siunčiami duomenys:", body);
 
     try {
       const response = await fetch("/api/transportationorder", {
@@ -52,6 +53,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
       }
     } catch (error) {
       console.error("Klaida:", error);
+      alert("Nepavyko sukurti: tinklo klaida");
     }
   };
 
@@ -88,7 +90,6 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
               }
           >
             <option value="Formed">Sudarytas</option>
-            <option value="Planed">Suplanuotas</option>
             <option value="InProgress">Vykdomas</option>
             <option value="Completed">Įvykdytas</option>
             <option value="Cancelled">Atšauktas</option>
