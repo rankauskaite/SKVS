@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 
-function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
+function CreateTransportationOrder({ form, setForm, onBack }) {
   const [error, setError] = useState("");
 
   // 11. selectWarehouseOrder() ir 12. chooseWarehouseOrder()
@@ -85,8 +85,18 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
 
       if (response.ok) {
         // 18. showSuccessMessage() ir 19. formMessage()
-        Swal.fire("✅ Sukurta", "Pervežimo užsakymas sėkmingai sukurtas", "success");
-        onSuccess();
+        Swal.fire("✅ Sukurta", "Pervežimo užsakymas sėkmingai sukurtas", "success", {
+          timer: 2000, showConfirmButton: false,});
+        // Palaukus 2 sekundes, grįžti atgal
+      setTimeout(() => {
+        // Grįžtame atgal į ankstesnį puslapį
+        onBack();
+        
+        // // Galite atlikti papildomą sėkmės apdorojimą, jei reikia
+        // if (typeof onSuccess === "function") {
+        //   onSuccess(selectedTime);
+        // }
+      }, 2000); // 2000 ms (2 sekundės) – tiek laiko rodomas sėkmės pranešimas
       } else {
         const errText = await response.text();
         console.error("Klaida:", errText);
@@ -133,6 +143,7 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
               }
           >
             <option value="Formed">Sudarytas</option>
+            <option value="Scheduled">Suplanuotas</option>
             <option value="InProgress">Vykdomas</option>
             <option value="Completed">Įvykdytas</option>
             <option value="Cancelled">Atšauktas</option>
@@ -176,20 +187,30 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
           <div>
             <h3 className="font-semibold">✅ Pasirink sandėlio užsakymus:</h3>
             {form.warehouseOrders.length === 0 ? (
-                <p>Nėra laisvų užsakymų</p>
+              <p>Nėra laisvų užsakymų</p>
             ) : (
-                form.warehouseOrders.map((wo) => (
-                    <label key={wo.id} className="block">
-                      <input
-                          type="checkbox"
-                          checked={form.warehouseOrderIds.includes(wo.id)}
-                          onChange={() => selectWarehouseOrder(wo.id)}
-                      />
-                      Užsakymas #{wo.id} – Kiekis: {wo.count}, Klientas ID: {wo.clientId}
-                    </label>
-                ))
+              <div className="flex flex-col gap-2 mt-2">
+                {form.warehouseOrders.map((wo) => (
+                  <div>
+                    <label
+                    key={wo.id}
+                    className="flex items-center gap-3 px-3 py-2 border rounded-md"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={form.warehouseOrderIds.includes(wo.id)}
+                      onChange={() => selectWarehouseOrder(wo.id)}
+                    />
+                    <span>Užsakymas #{wo.id}</span>
+                    <span>– Kiekis: {wo.count}</span>
+                    <span>– Klientas ID: {wo.clientId}</span>
+                  </label>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
+
 
           {error && <p className="text-red-600">{error}</p>}
 

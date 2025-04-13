@@ -116,10 +116,7 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 			<h2 className='table-title'>Sandėlio užsakymai</h2>
 			<div className='mt-4 flex gap-4'>
 				<button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={() => onNavigate('createWarehouse')}>
-					📦 Naujas Warehouse Order
-				</button>
-				<button onClick={onBack} className='bg-gray-400 text-white px-4 py-2 rounded'>
-					⬅️ Atgal
+					📦 Naujas sandėlio užsakymas
 				</button>
 			</div>
 			<table className='orders-table'>
