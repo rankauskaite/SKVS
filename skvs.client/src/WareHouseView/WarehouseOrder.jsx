@@ -56,10 +56,10 @@ function CheckOrderValidity({ order, onBack }) {
 			<h2 className="text-xl font-bold mb-4">📦 Užsakymo Tikrinimas</h2>
 
 			<div className="space-y-2 text-sm text-gray-800 bg-gray-100 p-4 rounded">
-				<p><strong>Užsakymo ID:</strong> {orderInfo.orderID}</p>
+				<p><strong>Užsakymo Nr.:</strong> {orderInfo.orderID}</p>
 				<p><strong>Užsakymo data:</strong> {orderInfo.orderDate}</p>
 				<p><strong>Pristatymo data:</strong> {orderInfo.deliveryDate}</p>
-				<p><strong>Kliento ID:</strong> {orderInfo.clientId}</p>
+				<p><strong>Kliento Nr.:</strong> {orderInfo.clientId}</p>
 				<p><strong>Užsakymo kiekis:</strong> {orderInfo.count}</p>
 				<p><strong>Užsakymo svoris:</strong> {orderInfo.weight} kg</p>
 			</div>

@@ -2,13 +2,33 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import '../TableStyles.css';
 
-const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, onBack }) => {
+const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 	const [truckingSelection, setTruckingSelection] = useState({});
 	const [truckingCompanies, setTruckingCompanies] = useState([]);
+	const [warehouseOrders, setOrders] = useState([]);
+	
+	  useEffect(() => {
+		const initiateTransportationOrdersView = async () => {
+		  try {
+			// Jei aktorius yra "driver", pridedame vairuotojo ID į užklausą
+			const url = "/api/warehouseorder";
+			
+			const res = await fetch(url);
+			if (!res.ok) throw new Error("Nepavyko gauti užsakymų");
+			const data = await res.json();
+			setOrders(data);
+		  } catch (err) {
+			console.error("❌ Klaida gaunant užsakymus:", err);
+			Swal.fire("Klaida", "Nepavyko užkrauti užsakymų", "error");
+		  }
+		};
+	
+		initiateTransportationOrdersView();
+	  }, []); // Kai pasikeičia actor ar driverId, iš naujo užkraunami duomenys
 
 	useEffect(() => {
 		const fetchCompanies = async () => {
-			const res = await fetch('/api/truckingcompanymanager');
+			const res = await fetch('/api/warehouseorder/truckingcompanies');
 			if (res.ok) {
 				const data = await res.json();
 				setTruckingCompanies(data);
@@ -93,17 +113,25 @@ const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, o
 
 	return (
 		<div className='full-page-center'>
-			<h2 className='table-title'>Warehouse Orders</h2>
+			<h2 className='table-title'>Sandėlio užsakymai</h2>
+			<div className='mt-4 flex gap-4'>
+				<button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={() => onNavigate('createWarehouse')}>
+					📦 Naujas Warehouse Order
+				</button>
+				<button onClick={onBack} className='bg-gray-400 text-white px-4 py-2 rounded'>
+					⬅️ Atgal
+				</button>
+			</div>
 			<table className='orders-table'>
 				<thead>
 					<tr>
-						<th>Užsakymo ID</th>
+						<th>Užsakymo Nr.</th>
 						<th>Klientas</th>
 						<th>Užsakymo data</th>
 						<th>Pristatymo data</th>
 						<th>Kiekis</th>
 						<th>Svoris(Kg)</th>
-						<th>Transporto užsakymo ID</th>
+						<th>Pervežimo užsakymo Nr.</th>
 						<th>Transporto įmonė</th>
 						<th>Veiksmai</th>
 					</tr>
@@ -113,8 +141,8 @@ const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, o
 						<tr key={order.id}>
 							<td>{order.orderID}</td>
 							<td>{order.clientId}</td>
-							<td>{new Date(order.orderDate).toLocaleString()}</td>
-							<td>{new Date(order.deliveryDate).toLocaleString()}</td>
+							<td>{order.orderDate ? new Date(order.orderDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}</td>
+							<td>{order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}</td>
 							<td>{order.count}</td>
 							<td>{order.weight}</td>
 							<td>{order.transportationOrderID ?? '-'}</td>
@@ -164,15 +192,6 @@ const WarehouseOrderList = ({ onNavigate, warehouseOrders, setWarehouseOrders, o
 					))}
 				</tbody>
 			</table>
-
-			<div className='mt-4 flex gap-4'>
-				<button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={() => onNavigate('createWarehouse')}>
-					📦 Naujas Warehouse Order
-				</button>
-				<button onClick={onBack} className='bg-gray-400 text-white px-4 py-2 rounded'>
-					⬅️ Atgal
-				</button>
-			</div>
 		</div>
 	);
 };

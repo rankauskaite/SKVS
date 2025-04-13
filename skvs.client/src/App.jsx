@@ -3,10 +3,12 @@ import Swal from "sweetalert2";
 
 import TransportationOrdersList from "./TransporatationView/TransporataionOrderList";
 import TransportationOrderForm from "./TransporatationView/TransportationOrderForm";
-import CreateWarehouseOrder from "./WareHouseView/CreateWarehouseOrder";
+import WarehouseOrderForm from "./WareHouseView/WarehouseOrderForm";
+import WarehouseOrderList from "./WareHouseView/WarehouseOrderList";
 import SelectDriverPage from "./TransporatationView/SelectDriverPage";
 import SelectTruckPage from "./TransporatationView/SelectTruckPage";
 import DeliveryTimeManagement from "./TransporatationView/DeliveryTimeManagement";
+import WarehouseOrder from "./WareHouseView/WarehouseOrder";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -16,26 +18,7 @@ function App() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [driverId, setDriverId] = useState(null);
   const [drivers, setDrivers] = useState([]);
-=======
-import TransportationOrdersList from './TransporatationView/TransporataionOrderList';
-import CreateTransportationOrder from './TransporatationView/CreateTransportationOrder';
-import CreateWarehouseOrder from './WareHouseView/CreateWarehouseOrder';
-import SelectDriverPage from './TransporatationView/SelectDriverPage';
-import SelectTruckPage from './TransporatationView/SelectTruckPage';
-import SelectDeliveryTimePage from './TransporatationView/SelectDeliveryTimePage';
-import WarehouseOrderList from './WareHouseView/WarehouseOrderList'; 
-import CheckOrderValidity from './WareHouseView/CheckOrderValidity';
-
-function App() {
-	const [currentPage, setCurrentPage] = useState('home');
-	const [selectedDriver, setSelectedDriver] = useState(null);
-	const [selectedTruck, setSelectedTruck] = useState(null);
-	const [selectedDeliveryTime, setSelectedDeliveryTime] = useState(null);
-	const [selectedOrderId, setSelectedOrderId] = useState(null);
-	const [orders, setOrders] = useState([]);
-	const [warehouseOrders, setWarehouseOrders] = useState([]);
-	const [selectedWarehouseOrder, setSelectedWarehouseOrder] = useState(null);
->>>>>>> Stashed changes
+  const [selectedWarehouseOrder, setSelectedWarehouseOrder] = useState(null);
 
   useEffect(() => {
     // Pirmiausia užkrauname vairuotojų sąrašą
@@ -89,6 +72,9 @@ function App() {
     if (page === "selectDeliveryTime") {
       setSelectedOrderId(extra);
     }
+    if (page === 'CheckOrderValidity') {
+      setSelectedWarehouseOrder(extra);
+    }
     setCurrentPage(page);
   };
 
@@ -96,17 +82,6 @@ function App() {
     const fullDate = new Date(deliveryTime.date);
     fullDate.setHours(deliveryTime.time?.hours || 0);
     fullDate.setMinutes(deliveryTime.time?.minutes || 0);
-=======
-	const handleNavigate = (page, extra = null) => {
-		if (page === 'selectDeliveryTime') {
-			setSelectedOrderId(extra);
-		}
-		if (page === 'CheckOrderValidity') {
-			setSelectedWarehouseOrder(extra);
-		}
-		setCurrentPage(page);
-	};
->>>>>>> Stashed changes
 
     setOrders((prev) =>
       prev.map((order) =>
@@ -209,10 +184,11 @@ function App() {
       )}
 
       {currentPage === "SVS" && (
-        <SelectDeliveryTimePage
-          orderId={selectedOrderId}
+        <WarehouseOrderList
+          onNavigate={handleNavigate}
+          setWarehouseOrders={() => {}}
           onBack={() => {
-            setSelectedOrderId(null);
+            resetForm();
             setCurrentPage("home");
           }}
         />
@@ -238,7 +214,7 @@ function App() {
       )}
 
       {currentPage === "createWarehouse" && (
-        <CreateWarehouseOrder onBack={() => setCurrentPage("home")} />
+        <WarehouseOrderForm onBack={() => setCurrentPage("home")} />
       )}
 
       {currentPage === "selectDriver" && (
@@ -260,6 +236,16 @@ function App() {
             setCurrentPage("createTransportation");
           }}
           onBack={() => setCurrentPage("createTransportation")}
+        />
+      )}
+
+      {currentPage === "CheckOrderValidity" && selectedWarehouseOrder && (
+        <WarehouseOrder
+          order={selectedWarehouseOrder}
+          onBack={() => {
+            setSelectedWarehouseOrder(null);
+            setCurrentPage("SVS");
+          }}
         />
       )}
 
