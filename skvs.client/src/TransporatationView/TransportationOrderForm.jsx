@@ -1,54 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
-  const [warehouseOrders, setWarehouseOrders] = useState([]);
-  const [drivers, setDrivers] = useState([]);
-  const [trucks, setTrucks] = useState([]);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetchAvailableWarehouseOrders();
-    fetchDrivers();
-    fetchTrucks();
-  }, []);
-
-  const fetchAvailableWarehouseOrders = async () => {
-    try {
-      const response = await fetch("/api/warehouseorder/available");
-      const data = await response.json();
-      setWarehouseOrders(data);
-    } catch (error) {
-      console.error("Klaida gaunant sandėlio užsakymus:", error);
-    }
-  };
-
-  const fetchDrivers = async () => {
-    try {
-      const response = await fetch("/api/drivers");
-      const data = await response.json();
-      setDrivers(data);
-    } catch (error) {
-      console.error("Klaida gaunant vairuotojus:", error);
-    }
-  };
-
-  const fetchTrucks = async () => {
-    try {
-      const response = await fetch("/api/trucks");
-      const data = await response.json();
-      setTrucks(data);
-    } catch (error) {
-      console.error("Klaida gaunant vilkikus:", error);
-    }
-  };
 
   const handleOrderToggle = (orderId) => {
     const isSelected = form.warehouseOrderIds.includes(orderId);
     const updated = isSelected
-        ? form.warehouseOrderIds.filter(id => id !== orderId)
+        ? form.warehouseOrderIds.filter((id) => id !== orderId)
         : [...form.warehouseOrderIds, orderId];
 
-    setForm(prev => ({ ...prev, warehouseOrderIds: updated }));
+    setForm((prev) => ({ ...prev, warehouseOrderIds: updated }));
   };
 
   const handleSubmit = async (e) => {
@@ -101,22 +62,30 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
           <input
               placeholder="Aprašymas"
               value={form.description}
-              onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                  setForm((prev) => ({ ...prev, description: e.target.value }))
+              }
           />
           <input
               placeholder="Adresas"
               value={form.address}
-              onChange={(e) => setForm(prev => ({ ...prev, address: e.target.value }))}
+              onChange={(e) =>
+                  setForm((prev) => ({ ...prev, address: e.target.value }))
+              }
           />
           <input
               type="date"
               value={form.deliveryTime}
-              onChange={(e) => setForm(prev => ({ ...prev, deliveryTime: e.target.value }))}
+              onChange={(e) =>
+                  setForm((prev) => ({ ...prev, deliveryTime: e.target.value }))
+              }
           />
 
           <select
               value={form.state}
-              onChange={(e) => setForm(prev => ({ ...prev, state: e.target.value }))}
+              onChange={(e) =>
+                  setForm((prev) => ({ ...prev, state: e.target.value }))
+              }
           >
             <option value="Formed">Sudarytas</option>
             <option value="Planed">Suplanuotas</option>
@@ -131,13 +100,15 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
             <select
                 value={form.selectedDriver?.userId || ""}
                 onChange={(e) => {
-                  const selected = drivers.find(d => d.userId === e.target.value);
-                  setForm(prev => ({ ...prev, selectedDriver: selected || null }));
+                  const selected = form.drivers.find(
+                      (d) => d.userId === e.target.value
+                  );
+                  setForm((prev) => ({ ...prev, selectedDriver: selected || null }));
                 }}
                 className="mt-1 p-2 border rounded w-full"
             >
               <option value="">-- Pasirinkti vairuotoją --</option>
-              {drivers.map(driver => (
+              {form.drivers.map((driver) => (
                   <option key={driver.userId} value={driver.userId}>
                     {driver.name} {driver.surname}
                   </option>
@@ -151,13 +122,15 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
             <select
                 value={form.selectedTruck?.plateNumber || ""}
                 onChange={(e) => {
-                  const selected = trucks.find(t => t.plateNumber === e.target.value);
-                  setForm(prev => ({ ...prev, selectedTruck: selected || null }));
+                  const selected = form.trucks.find(
+                      (t) => t.plateNumber === e.target.value
+                  );
+                  setForm((prev) => ({ ...prev, selectedTruck: selected || null }));
                 }}
                 className="mt-1 p-2 border rounded w-full"
             >
               <option value="">-- Pasirinkti vilkiką --</option>
-              {trucks.map(truck => (
+              {form.trucks.map((truck) => (
                   <option key={truck.plateNumber} value={truck.plateNumber}>
                     {truck.plateNumber}
                   </option>
@@ -168,10 +141,10 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
           {/* Sandėlio užsakymai */}
           <div>
             <h3 className="font-semibold">✅ Pasirink sandėlio užsakymus:</h3>
-            {warehouseOrders.length === 0 ? (
+            {form.warehouseOrders.length === 0 ? (
                 <p>Nėra laisvų užsakymų</p>
             ) : (
-                warehouseOrders.map((wo) => (
+                form.warehouseOrders.map((wo) => (
                     <label key={wo.id} className="block">
                       <input
                           type="checkbox"
@@ -187,10 +160,17 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
           {error && <p className="text-red-600">{error}</p>}
 
           <div className="flex gap-4 mt-4">
-            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+            <button
+                type="submit"
+                className="bg-green-600 text-white px-4 py-2 rounded"
+            >
               💾 Sukurti
             </button>
-            <button type="button" onClick={onBack} className="bg-gray-400 text-white px-4 py-2 rounded">
+            <button
+                type="button"
+                onClick={onBack}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+            >
               ⬅️ Atgal
             </button>
           </div>
