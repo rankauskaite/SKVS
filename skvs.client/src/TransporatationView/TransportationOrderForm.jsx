@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
   const [error, setError] = useState("");
@@ -44,16 +45,16 @@ function CreateTransportationOrder({ form, setForm, onBack, onSuccess }) {
       });
 
       if (response.ok) {
-        alert("Sukurta sėkmingai!");
+        Swal.fire("✅ Sukurta", "Pervežimo užsakymas sėkmingai sukurtas", "success");
         onSuccess();
       } else {
         const errText = await response.text();
         console.error("Klaida:", errText);
-        alert("Nepavyko sukurti: " + errText);
+        Swal.fire("❌ Klaida", "Nepavyko sukurti pervežimo užsakymo: " + errText, "error");
       }
     } catch (error) {
       console.error("Klaida:", error);
-      alert("Nepavyko sukurti: tinklo klaida");
+      Swal.fire("❌ Klaida", "Nepavyko sukurti pervežimo užsakymo: tinklo klaida", "error");
     }
   };
 
