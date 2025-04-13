@@ -45,7 +45,7 @@ namespace SKVS.Server.Controllers
             Ok(await _repositoryTruck.GetAllAsync());
 
 
-        [HttpGet("/api/warehouseOrder/available")]
+        [HttpGet("/api/available/warehouseOrders")]
         public async Task<IActionResult> GetAvailable()
         {
             var availableOrders = await _repositoryWarehouseOrder.GetUnassignedAsync(); // turi būti įgyvendinta repozitorijoje

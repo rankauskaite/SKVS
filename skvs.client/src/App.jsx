@@ -83,7 +83,7 @@ function App() {
       const trucksData = await trucksRes.json();
 
       // Gauname sandėlio užsakymus
-      const warehouseOrdersRes = await fetch("/api/warehouseOrder/available");
+      const warehouseOrdersRes = await fetch("/api/available/warehouseOrders");
       if (!warehouseOrdersRes.ok)
         throw new Error("Nepavyko gauti sandėlio užsakymų");
       const warehouseOrdersData = await warehouseOrdersRes.json();
