@@ -7,6 +7,7 @@ function CreateWarehouseOrder({ onBack }) {
   const [orderDate, setOrderDate] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [clientId, setClientId] = useState("");
+  const [orderWeight, setOrderWeight] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,8 +17,10 @@ function CreateWarehouseOrder({ onBack }) {
       count: parseInt(count),
       orderDate,
       deliveryDate,
+      weight: parseFloat(orderWeight),
       clientId: parseInt(clientId),
     };
+    console.log("Sandėlio užsakymas:", warehouseOrder.weight);
 
     try {
       const response = await fetch("/api/warehouseorder", {
@@ -33,6 +36,7 @@ function CreateWarehouseOrder({ onBack }) {
         setOrderDate("");
         setDeliveryDate("");
         setClientId("");
+        setOrderWeight(null);
       } else {
         const error = await response.text();
         console.error("Klaida:", error);
@@ -45,11 +49,11 @@ function CreateWarehouseOrder({ onBack }) {
 
   return (
     <div className="p-4 max-w-lg mx-auto">
-      <h2 className="text-xl font-bold mb-4">📦 Sukurti Warehouse Order</h2>
+      <h2 className="text-xl font-bold mb-4">📦 Sukurti sandėlio užsakymą</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="number"
-          placeholder="Order ID"
+          placeholder="Užsakymo Nr."
           value={orderID}
           onChange={(e) => setOrderID(e.target.value)}
           className="w-full border rounded px-3 py-2"
@@ -84,8 +88,16 @@ function CreateWarehouseOrder({ onBack }) {
           />
         </label>
         <input
+          type="float"
+          placeholder="Svoris (kg)"
+          value={orderWeight}
+          onChange={(e) => setOrderWeight(e.target.value)}
+          className="w-full border rounded px-3 py-2"
+          required
+        />
+        <input
           type="number"
-          placeholder="Kliento ID"
+          placeholder="Kliento Nr."
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
           className="w-full border rounded px-3 py-2"
