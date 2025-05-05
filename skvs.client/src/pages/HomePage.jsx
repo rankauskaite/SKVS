@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+import { Button } from '@/components/ui/button';
 
 export default function HomePage() {
 	const navigate = useNavigate();
@@ -10,17 +11,13 @@ export default function HomePage() {
 	];
 
 	return (
-		<div className='p-8 max-w-xl mx-auto'>
-			<h1 className='text-3xl font-bold mb-6 text-center'>🚚 SKVS</h1>
+		<div className='p-8 max-w-xl mx-auto content-center text-center'>
+			<p className='text-4xl font-bold mb-4'>🚚 SKVS</p>
 			<div className='grid grid-cols-1 gap-5 p-4 m-4'>
 				{pages.map((page) => (
-					<button
-						key={page.path}
-						onClick={() => navigate(page.path)}
-						className='block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-xl transition'
-					>
+					<Button key={page.path} onClick={() => navigate(page.path)}>
 						{page.label}
-					</button>
+					</Button>
 				))}
 			</div>
 		</div>

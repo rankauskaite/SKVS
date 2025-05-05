@@ -3,6 +3,8 @@ import Swal from 'sweetalert2';
 import '../TableStyles.css';
 import { useNavigate } from 'react-router';
 import Routes from '../pages/Routes';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 
 const TransportationOrdersList = ({ actor, actorId, actors }) => {
 	const [orders, setOrders] = useState([]);
@@ -90,40 +92,40 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 			</h2>
 			{actor !== 'driver' && (
 				<div className='mt-4 flex gap-4'>
-					<button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={initiateTransportationOrderCreation}>
-						➕ Naujas pervežimo užsakymas
-					</button>
+					<Button onClick={initiateTransportationOrderCreation}>➕ Naujas pervežimo užsakymas</Button>
 				</div>
 			)}
-			<table className='orders-table'>
-				<thead>
-					<tr>
-						<th>Užsakymo Nr.</th>
-						<th>Aprašymas</th>
-						<th>Adresas</th>
-						<th>Pristatymo laikas</th>
-						<th>Rampa</th>
-						<th>Rezervuotas laikas</th>
+			<Table>
+				<TableHeader>
+					<TableRow>
+						<TableHead>Užsakymo Nr.</TableHead>
+						<TableHead>Aprašymas</TableHead>
+						<TableHead>Adresas</TableHead>
+						<TableHead>Pristatymo laikas</TableHead>
+						<TableHead>Rampa</TableHead>
+						<TableHead>Rezervuotas laikas</TableHead>
 						{actor !== 'driver' && (
 							<>
-								<th>Būsena</th>
-								<th>Pakeliui</th>
-								<th>Vairuotojas</th>
+								<TableHead>Būsena</TableHead>
+								<TableHead>Pakeliui</TableHead>
+								<TableHead>Vairuotojas</TableHead>
 							</>
 						)}
-						<th>Sunkvežimio numeris</th>
-						{actor === 'driver' && <th>Veiksmai</th>}
-					</tr>
-				</thead>
-				<tbody>
+						<TableHead>Sunkvežimio numeris</TableHead>
+						{actor === 'driver' && <TableHead>Veiksmai</TableHead>}
+					</TableRow>
+				</TableHeader>
+				<TableBody>
 					{orders.map((order) => (
-						<tr key={order.orderId}>
-							<td>{order.orderId}</td>
-							<td>{order.description}</td>
-							<td>{order.address}</td>
-							<td>{order.deliveryTime ? new Date(order.deliveryTime).toLocaleDateString('lt-LT') : 'Nepaskirtas'}</td>
-							<td>{order.ramp ?? '-'}</td>
-							<td>
+						<TableRow key={order.orderId}>
+							<TableCell>{order.orderId}</TableCell>
+							<TableCell>{order.description}</TableCell>
+							<TableCell>{order.address}</TableCell>
+							<TableCell>
+								{order.deliveryTime ? new Date(order.deliveryTime).toLocaleDateString('lt-LT') : 'Nepaskirtas'}
+							</TableCell>
+							<TableCell>{order.ramp ?? '-'}</TableCell>
+							<TableCell>
 								{order.deliveryTime
 									? new Date(order.deliveryTime).getHours() === 0 && new Date(order.deliveryTime).getMinutes() === 0
 										? '-'
@@ -134,59 +136,41 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 												.toString()
 												.padStart(2, '0')}`
 									: '-'}
-							</td>
+							</TableCell>
 							{actor !== 'driver' && (
 								<>
-									<td>{stateLabelsLt[order.state] || order.state}</td>
-									<td>{order.isOnTheWay ? 'Taip' : 'Ne'}</td>
-									<td>
+									<TableCell>{stateLabelsLt[order.state] || order.state}</TableCell>
+									<TableCell>{order.isOnTheWay ? 'Taip' : 'Ne'}</TableCell>
+									<TableCell>
 										{order.assignedDriverId
 											? `${actors.find((driver) => driver.userId === order.assignedDriverId)?.name} ${
 													actors.find((driver) => driver.userId === order.assignedDriverId)?.surname
 											  }`
 											: 'Nėra'}
-									</td>
+									</TableCell>
 								</>
 							)}
-							<td>{order.truckPlateNumber || '-'}</td>
+							<TableCell>{order.truckPlateNumber || '-'}</TableCell>
 							{actor === 'driver' && (
-								<td className='flex flex-col gap-2'>
-									<button className='bg-green-500 text-white px-2 py-1 rounded text-sm' onClick={() => {}}>
-										📋 Detalės
-									</button>
+								<TableCell className='flex flex-col gap-2'>
+									<Button onClick={() => {}}>📋 Detalės</Button>
 									{order.deliveryTime &&
 									new Date(order.deliveryTime).getHours() === 0 &&
 									new Date(order.deliveryTime).getMinutes() === 0 ? (
-										<button
-											className='bg-blue-500 text-white px-2 py-1 rounded text-sm'
-											onClick={() => initiateTimeReservation(order.orderId)}
-										>
-											🕒 Priskirti laiką
-										</button>
+										<Button onClick={() => initiateTimeReservation(order.orderId)}>🕒 Priskirti laiką</Button>
 									) : (
 										<>
-											<button
-												className='bg-yellow-500 text-white px-2 py-1 rounded text-sm'
-												onClick={() => initiateTimeChange(order.orderId)}
-											>
-												✏️ Keisti laiką
-											</button>
-											<button
-												className='bg-red-500 text-white px-2 py-1 rounded text-sm'
-												onClick={() => confirmCancellation(order.orderId)}
-											>
-												❌ Atšaukti laiką
-											</button>
+											<Button onClick={() => initiateTimeChange(order.orderId)}>✏️ Keisti laiką</Button>
+											<Button onClick={() => confirmCancellation(order.orderId)}>❌ Atšaukti laiką</Button>
 										</>
 									)}
-								</td>
+								</TableCell>
 							)}
-						</tr>
+						</TableRow>
 					))}
-				</tbody>
-			</table>
+				</TableBody>
+			</Table>
 		</div>
 	);
 };
-
 export default TransportationOrdersList;
