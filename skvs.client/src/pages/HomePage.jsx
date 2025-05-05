@@ -1,28 +1,26 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export default function HomePage() {
+	const navigate = useNavigate();
+
 	const pages = [
-		{ path: '/driver', label: 'Driver View' },
-		{ path: '/truck-company', label: 'Truck Company View' },
-		{ path: '/svs', label: 'SVS View' },
-		{ path: '/create-transportation', label: 'Create Transportation Order' },
-		{ path: '/create-warehouse', label: 'Create Warehouse Order' },
-		{ path: '/select-delivery-time/1', label: 'Select Delivery Time (Example ID)' },
-		{ path: '/check-order/1', label: 'Check Order Validity (Example ID)' },
+		{ path: '/driver', label: 'Vairuotojas' },
+		{ path: '/truckcompany', label: 'Sunkvežimių įmonė' },
+		{ path: '/svs', label: 'SVS' },
 	];
 
 	return (
 		<div className='p-8 max-w-xl mx-auto'>
 			<h1 className='text-3xl font-bold mb-6 text-center'>🚚 SKVS</h1>
-			<div className='grid grid-cols-1 gap-4'>
+			<div className='grid grid-cols-1 gap-5 p-4 m-4'>
 				{pages.map((page) => (
-					<Link
-						to={page.path}
+					<button
 						key={page.path}
-						className='block bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-xl transition'
+						onClick={() => navigate(page.path)}
+						className='block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-xl transition'
 					>
 						{page.label}
-					</Link>
+					</button>
 				))}
 			</div>
 		</div>

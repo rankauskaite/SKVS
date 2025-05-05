@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import '../TableStyles.css';
+import { useNavigate } from 'react-router';
+import Routes from '../pages/Routes';
 
 const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 	const [truckingSelection, setTruckingSelection] = useState({});
 	const [truckingCompanies, setTruckingCompanies] = useState([]);
 	const [warehouseOrders, setOrders] = useState([]);
-	
-	  useEffect(() => {
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
 		const initiateTransportationOrdersView = async () => {
-		  try {
-			// Jei aktorius yra "driver", pridedame vairuotojo ID į užklausą
-			const url = "/api/warehouseorder";
-			
-			const res = await fetch(url);
-			if (!res.ok) throw new Error("Nepavyko gauti užsakymų");
-			const data = await res.json();
-			setOrders(data);
-		  } catch (err) {
-			console.error("❌ Klaida gaunant užsakymus:", err);
-			Swal.fire("Klaida", "Nepavyko užkrauti užsakymų", "error");
-		  }
+			try {
+				// Jei aktorius yra "driver", pridedame vairuotojo ID į užklausą
+				const url = '/api/warehouseorder';
+
+				const res = await fetch(url);
+				if (!res.ok) throw new Error('Nepavyko gauti užsakymų');
+				const data = await res.json();
+				setOrders(data);
+			} catch (err) {
+				console.error('❌ Klaida gaunant užsakymus:', err);
+				Swal.fire('Klaida', 'Nepavyko užkrauti užsakymų', 'error');
+			}
 		};
-	
+
 		initiateTransportationOrdersView();
-	  }, []); // Kai pasikeičia actor ar driverId, iš naujo užkraunami duomenys
+	}, []); // Kai pasikeičia actor ar driverId, iš naujo užkraunami duomenys
 
 	useEffect(() => {
 		const fetchCompanies = async () => {
@@ -115,7 +119,10 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 		<div className='full-page-center'>
 			<h2 className='table-title'>Sandėlio užsakymai</h2>
 			<div className='mt-4 flex gap-4'>
-				<button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={() => onNavigate('createWarehouse')}>
+				<button
+					className='bg-blue-600 text-white px-4 py-2 rounded'
+					onClick={() => navigate(Routes.createWarehouseOrder)}
+				>
 					📦 Naujas sandėlio užsakymas
 				</button>
 			</div>
@@ -169,13 +176,13 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 								</button>
 							</td>
 							<td className='flex flex-col gap-2'>
-								<button
-									className='bg-yellow-500 text-white px-2 py-1 rounded text-sm'
-									onClick={() => onNavigate('editWarehouseOrder', order.id)}
-								>
+								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => {}}>
 									✏️ Redaguoti užsakymą
 								</button>
-								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => onNavigate('CheckOrderValidity', order)}>
+								<button
+									className='bg-yellow-500 text-white px-2 py-1 rounded text-sm'
+									onClick={() => navigate(Routes.checkWarehouseOrder(order.id))}
+								>
 									🔎 Patikrinti krovinį
 								</button>
 								<button

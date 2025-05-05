@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import DeliveryTimeManagement from '../TransporatationView/DeliveryTimeManagement';
 
@@ -20,7 +20,7 @@ export default function DeliveryTimePage() {
 			orderDate={orderDate}
 			onSelect={() => {}}
 			onBack={() => navigate(-1)}
-			onSuccess={() => navigate('/')}
+			onSuccess={() => {}}
 		/>
 	);
 }

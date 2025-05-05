@@ -33,7 +33,6 @@ export default function TruckCompanyPage() {
 
 	return (
 		<TransportationOrdersList
-			onNavigate={() => {}}
 			actor='truckCompany'
 			actorId={1}
 			actors={drivers}

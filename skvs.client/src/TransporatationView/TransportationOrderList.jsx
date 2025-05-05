@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import '../TableStyles.css';
+import { useNavigate } from 'react-router';
+import Routes from '../pages/Routes';
 
-const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
+const TransportationOrdersList = ({ actor, actorId, actors }) => {
 	const [orders, setOrders] = useState([]);
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const initiateTransportationOrdersView = async () => {
@@ -25,15 +29,15 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
 	}, [actor, actorId]);
 
 	const initiateTransportationOrderCreation = () => {
-		onNavigate('createTransportation');
+		navigate(Routes.createTransportationOrder);
 	};
 
-	const initiateTimeReservation = async (orderId, orderDate) => {
-		onNavigate('selectDeliveryTime', orderId, orderDate);
+	const initiateTimeReservation = (orderId) => {
+		navigate(Routes.selectTime(orderId));
 	};
 
-	const initiateTimeChange = async (orderId, orderDate) => {
-		onNavigate('selectDeliveryTime', orderId, orderDate);
+	const initiateTimeChange = (orderId) => {
+		navigate(Routes.selectTime(orderId));
 	};
 
 	const confirmCancellation = async (orderId) => {
@@ -147,10 +151,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
 							<td>{order.truckPlateNumber || '-'}</td>
 							{actor === 'driver' && (
 								<td className='flex flex-col gap-2'>
-									<button
-										className='bg-green-500 text-white px-2 py-1 rounded text-sm'
-										onClick={() => onNavigate('orderDetails', order.orderId)}
-									>
+									<button className='bg-green-500 text-white px-2 py-1 rounded text-sm' onClick={() => {}}>
 										📋 Detalės
 									</button>
 									{order.deliveryTime &&
@@ -158,7 +159,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
 									new Date(order.deliveryTime).getMinutes() === 0 ? (
 										<button
 											className='bg-blue-500 text-white px-2 py-1 rounded text-sm'
-											onClick={() => initiateTimeReservation(order.orderId, order.deliveryTime)}
+											onClick={() => initiateTimeReservation(order.orderId)}
 										>
 											🕒 Priskirti laiką
 										</button>
@@ -166,7 +167,7 @@ const TransportationOrdersList = ({ onNavigate, actor, actorId, actors }) => {
 										<>
 											<button
 												className='bg-yellow-500 text-white px-2 py-1 rounded text-sm'
-												onClick={() => initiateTimeChange(order.orderId, order.deliveryTime)}
+												onClick={() => initiateTimeChange(order.orderId)}
 											>
 												✏️ Keisti laiką
 											</button>

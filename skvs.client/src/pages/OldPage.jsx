@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-import TransportationOrdersList from './TransporatationView/TransportationOrderList.jsx';
-import TransportationOrderForm from './TransporatationView/TransportationOrderForm.jsx';
-import WarehouseOrderForm from './WareHouseView/WarehouseOrderForm.jsx';
-import WarehouseOrderList from './WareHouseView/WarehouseOrderList.jsx';
-import DeliveryTimeManagement from './TransporatationView/DeliveryTimeManagement.jsx';
-import WarehouseOrder from './WareHouseView/WarehouseOrder.jsx';
+import TransportationOrdersList from '../TransporatationView/TransportationOrderList.jsx';
+import TransportationOrderForm from '../TransporatationView/TransportationOrderForm.jsx';
+import WarehouseOrderForm from '../WareHouseView/WarehouseOrderForm.jsx';
+import WarehouseOrderList from '../WareHouseView/WarehouseOrderList.jsx';
+import DeliveryTimeManagement from '../TransporatationView/DeliveryTimeManagement.jsx';
+import WarehouseOrder from '../WareHouseView/WarehouseOrder.jsx';
 
-function OldPage() {
+export default function OldPage() {
 	// Būsenos
 	const [currentPage, setCurrentPage] = useState('home');
 	const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -309,5 +309,3 @@ function OldPage() {
 		</div>
 	);
 }
-
-export default OldPage;

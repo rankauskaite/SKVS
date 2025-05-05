@@ -33,7 +33,6 @@ export default function DriverPage() {
 
 	return (
 		<TransportationOrdersList
-			onNavigate={() => {}}
 			actor='driver'
 			actorId={1}
 			actors={drivers}
