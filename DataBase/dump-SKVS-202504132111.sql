@@ -224,7 +224,7 @@ CREATE TABLE `TransportationOrder` (
   `ramp` int DEFAULT NULL,
   `isCompleted` tinyint(1) DEFAULT '0',
   `assignedDriverId` int DEFAULT NULL,
-  `state` enum('Cancelled','Formed','InProgress','Completed') DEFAULT NULL,
+  `state` enum('Cancelled','Scheduled','Formed','InProgress','Completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `isOnTheWay` tinyint(1) DEFAULT '0',
   `createdBy_id` int DEFAULT NULL,
   `deliveryTimeId` int DEFAULT NULL,
@@ -234,7 +234,7 @@ CREATE TABLE `TransportationOrder` (
   KEY `truckPlateNumber` (`truckPlateNumber`),
   CONSTRAINT `TransportationOrder_ibfk_1` FOREIGN KEY (`createdBy_id`) REFERENCES `TruckingCompanyManager` (`user_id`),
   CONSTRAINT `TransportationOrder_ibfk_2` FOREIGN KEY (`truckPlateNumber`) REFERENCES `Truck` (`plateNumber`)
-) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1011 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,7 +243,7 @@ CREATE TABLE `TransportationOrder` (
 
 LOCK TABLES `TransportationOrder` WRITE;
 /*!40000 ALTER TABLE `TransportationOrder` DISABLE KEYS */;
-INSERT INTO `TransportationOrder` VALUES (1001,'Statybinių medžiagų pervežimas','Vilnius, Sandėlių g. 5',0,'2025-04-15 09:00:00',3,0,1,'Formed',1,3,2,'TRK123'),(1002,'Aprasymas','adresas',0,'2025-04-18 00:00:00',NULL,0,1,'Formed',0,3,NULL,'TRK123');
+INSERT INTO `TransportationOrder` VALUES (1001,'Statybinių medžiagų pervežimas','Vilnius, Sandėlių g. 5',0,'2025-04-15 09:00:00',3,0,1,'Scheduled',1,3,2,'TRK123'),(1002,'Aprasymas','adresas',0,'2025-04-18 00:00:00',NULL,0,1,'Formed',0,3,NULL,'TRK123'),(1003,'trali vali','Kauno g. 9',0,'2025-04-22 00:00:00',NULL,0,2,'Formed',0,3,NULL,'TRK123'),(1010,'bandau','Gatve g. 5',0,'2025-04-16 00:00:00',NULL,0,1,'Formed',0,3,NULL,'TRK123');
 /*!40000 ALTER TABLE `TransportationOrder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,7 +372,7 @@ CREATE TABLE `WarehouseOrder` (
   KEY `client_id` (`client_id`),
   CONSTRAINT `WarehouseOrder_ibfk_1` FOREIGN KEY (`transportationOrderID`) REFERENCES `TransportationOrder` (`orderID`),
   CONSTRAINT `WarehouseOrder_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `SVS` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +381,7 @@ CREATE TABLE `WarehouseOrder` (
 
 LOCK TABLES `WarehouseOrder` WRITE;
 /*!40000 ALTER TABLE `WarehouseOrder` DISABLE KEYS */;
-INSERT INTO `WarehouseOrder` VALUES (1,5001,120,'2025-04-10','2025-04-15',1001,1,3,50),(2,3,1,'2025-04-12','2025-04-17',1002,1,3,50),(3,7,1,'2025-04-12','2025-04-17',NULL,1,3,50),(4,12,1,'2025-04-13','2025-04-22',NULL,1,NULL,50),(5,32,1,'2025-04-13','2025-04-15',NULL,1,NULL,50),(6,32,1,'2025-04-13','2025-04-15',NULL,1,NULL,50);
+INSERT INTO `WarehouseOrder` VALUES (1,5001,120,'2025-04-10','2025-04-15',1001,1,3,50),(2,3,1,'2025-04-12','2025-04-17',1002,1,3,50),(3,7,1,'2025-04-12','2025-04-17',1003,1,3,50),(4,12,1,'2025-04-13','2025-04-22',1010,1,3,50),(5,32,1,'2025-04-13','2025-04-15',NULL,1,NULL,50),(8,80,1,'2025-04-21','2025-04-22',NULL,1,NULL,0),(9,126,1,'2025-04-17','2025-04-25',NULL,1,NULL,380),(12,11,1,'2025-04-16','2025-04-25',NULL,1,NULL,100);
 /*!40000 ALTER TABLE `WarehouseOrder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -428,4 +428,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-13 17:35:59
+-- Dump completed on 2025-04-13 21:11:24

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SKVS.Server.Data;
+using SKVS.Server.Enums;
 using SKVS.Server.Models;
 
 namespace SKVS.Server.Repository
@@ -33,6 +34,7 @@ namespace SKVS.Server.Repository
             {
                 order.DeliveryTime = deliveryTime;
                 order.Ramp = ramp;
+                order.State = OrderState.Scheduled;
                 await _context.SaveChangesAsync();
             }
         }
@@ -46,6 +48,7 @@ namespace SKVS.Server.Repository
                 DateTime o = order.DeliveryTime.Date;
                 order.DeliveryTime = o;
                 order.Ramp = null;
+                order.State = OrderState.Formed;
                 _context.TransportationOrders.Update(order);
                 await _context.SaveChangesAsync();
             }
