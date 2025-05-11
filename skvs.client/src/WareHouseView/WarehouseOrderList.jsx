@@ -1,30 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import '../TableStyles.css';
+import { useNavigate } from 'react-router';
+import Routes from '../pages/Routes';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 	const [truckingSelection, setTruckingSelection] = useState({});
 	const [truckingCompanies, setTruckingCompanies] = useState([]);
 	const [warehouseOrders, setOrders] = useState([]);
-	
-	  useEffect(() => {
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
 		const initiateTransportationOrdersView = async () => {
-		  try {
-			// Jei aktorius yra "driver", pridedame vairuotojo ID į užklausą
-			const url = "/api/warehouseorder";
-			
-			const res = await fetch(url);
-			if (!res.ok) throw new Error("Nepavyko gauti užsakymų");
-			const data = await res.json();
-			setOrders(data);
-		  } catch (err) {
-			console.error("❌ Klaida gaunant užsakymus:", err);
-			Swal.fire("Klaida", "Nepavyko užkrauti užsakymų", "error");
-		  }
+			try {
+				// Jei aktorius yra "driver", pridedame vairuotojo ID į užklausą
+				const url = '/api/warehouseorder';
+
+				const res = await fetch(url);
+				if (!res.ok) throw new Error('Nepavyko gauti užsakymų');
+				const data = await res.json();
+				setOrders(data);
+			} catch (err) {
+				console.error('❌ Klaida gaunant užsakymus:', err);
+				Swal.fire('Klaida', 'Nepavyko užkrauti užsakymų', 'error');
+			}
 		};
-	
+
 		initiateTransportationOrdersView();
-	  }, []); // Kai pasikeičia actor ar driverId, iš naujo užkraunami duomenys
+	}, []); // Kai pasikeičia actor ar driverId, iš naujo užkraunami duomenys
 
 	useEffect(() => {
 		const fetchCompanies = async () => {
@@ -115,80 +122,74 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 		<div className='full-page-center'>
 			<h2 className='table-title'>Sandėlio užsakymai</h2>
 			<div className='mt-4 flex gap-4'>
-				<button className='bg-blue-600 text-white px-4 py-2 rounded' onClick={() => onNavigate('createWarehouse')}>
-					📦 Naujas sandėlio užsakymas
-				</button>
+				<Button onClick={() => navigate(Routes.createWarehouseOrder)}>📦 Naujas sandėlio užsakymas</Button>
 			</div>
-			<table className='orders-table'>
-				<thead>
-					<tr>
-						<th>Užsakymo Nr.</th>
-						<th>Klientas</th>
-						<th>Užsakymo data</th>
-						<th>Pristatymo data</th>
-						<th>Kiekis</th>
-						<th>Svoris(Kg)</th>
-						<th>Pervežimo užsakymo Nr.</th>
-						<th>Transporto įmonė</th>
-						<th>Veiksmai</th>
-					</tr>
-				</thead>
-				<tbody>
+			<Table>
+				<TableHeader>
+					<TableRow>
+						<TableHead>Užsakymo Nr.</TableHead>
+						<TableHead>Klientas</TableHead>
+						<TableHead>Užsakymo data</TableHead>
+						<TableHead>Pristatymo data</TableHead>
+						<TableHead>Kiekis</TableHead>
+						<TableHead>Svoris (Kg)</TableHead>
+						<TableHead>Pervežimo užsakymo Nr.</TableHead>
+						<TableHead>Transporto įmonė</TableHead>
+						<TableHead>Veiksmai</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
 					{warehouseOrders.map((order) => (
-						<tr key={order.id}>
-							<td>{order.orderID}</td>
-							<td>{order.clientId}</td>
-							<td>{order.orderDate ? new Date(order.orderDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}</td>
-							<td>{order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}</td>
-							<td>{order.count}</td>
-							<td>{order.weight}</td>
-							<td>{order.transportationOrderID ?? '-'}</td>
-							<td>
-								<select
-									className='px-2 py-1 text-sm rounded'
-									value={truckingSelection[order.id] || ''}
-									onChange={(e) =>
-										setTruckingSelection((prev) => ({
-											...prev,
-											[order.id]: e.target.value,
-										}))
-									}
-								>
-									<option value=''>-- Pasirinkti --</option>
-									{truckingCompanies.map((company) => (
-										<option key={company.userId} value={company.truckingCompanyName}>
-											{company.truckingCompanyName}
-										</option>
-									))}
-								</select>
-								<button
-									className='ml-2 bg-green-600 text-white px-2 py-1 rounded text-sm'
-									onClick={() => handleSetTruckingCompany(order.id)}
-								>
-									💼 Priskirti
-								</button>
-							</td>
-							<td className='flex flex-col gap-2'>
-								<button
-									className='bg-yellow-500 text-white px-2 py-1 rounded text-sm'
-									onClick={() => onNavigate('editWarehouseOrder', order.id)}
-								>
-									✏️ Redaguoti užsakymą
-								</button>
-								<button className='bg-yellow-500 text-white px-2 py-1 rounded text-sm' onClick={() => onNavigate('CheckOrderValidity', order)}>
-									🔎 Patikrinti krovinį
-								</button>
-								<button
-									className='bg-red-500 text-white px-2 py-1 rounded text-sm'
-									onClick={() => handleCancel(order.id)}
-								>
-									❌ Atšaukti užsakymą
-								</button>
-							</td>
-						</tr>
+						<TableRow key={order.id}>
+							<TableCell>{order.orderID}</TableCell>
+							<TableCell>{order.clientId}</TableCell>
+							<TableCell>
+								{order.orderDate ? new Date(order.orderDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}
+							</TableCell>
+							<TableCell>
+								{order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('lt-LT') : 'Nepaskirta'}
+							</TableCell>
+							<TableCell>{order.count}</TableCell>
+							<TableCell>{order.weight}</TableCell>
+							<TableCell>{order.transportationOrderID ?? '-'}</TableCell>
+							<TableCell>
+								<div className='flex items-center gap-2'>
+									<Select
+										value={truckingSelection[order.id] || '__none__'}
+										onValueChange={(value) =>
+											setTruckingSelection((prev) => ({
+												...prev,
+												[order.id]: value === '__none__' ? '' : value,
+											}))
+										}
+									>
+										<SelectTrigger className='w-[200px]'>
+											<SelectValue placeholder='-- Pasirinkti --' />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value='__none__'>-- Pasirinkti --</SelectItem>
+											{truckingCompanies.map((company) => (
+												<SelectItem key={company.userId} value={company.truckingCompanyName}>
+													{company.truckingCompanyName}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+
+									<Button onClick={() => handleSetTruckingCompany(order.id)}>💼 Priskirti</Button>
+								</div>
+							</TableCell>
+							<TableCell>
+								<div className='flex flex-col gap-2'>
+									<Button onClick={() => {}}>✏️ Redaguoti užsakymą</Button>
+									<Button onClick={() => navigate(Routes.checkWarehouseOrder(order.id))}>🔎 Patikrinti krovinį</Button>
+									<Button onClick={() => handleCancel(order.id)}>❌ Atšaukti užsakymą</Button>
+								</div>
+							</TableCell>
+						</TableRow>
 					))}
-				</tbody>
-			</table>
+				</TableBody>
+			</Table>
 		</div>
 	);
 };

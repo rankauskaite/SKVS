@@ -45,3 +45,19 @@ appsettings.Development.json
 ## Mac / Windows / Linux OS failai
 .DS_Store
 Thumbs.db
+
+### FrontEnd failai ###
+skvs.client/.DS_*
+skvs.client/*.log
+skvs.client/logs
+skvs.client/**/*.backup.*
+skvs.client/**/*.back.*
+
+skvs.client/node_modules
+skvs.client/bower_components
+
+skvs.client/*.sublime*
+
+skvs.client/psd
+skvs.client/thumb
+skvs.client/sketch
