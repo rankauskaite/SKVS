@@ -1,22 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 
-function CreateTransportationOrder({ form, setForm, onBack }) {
+function CreateTransportationOrder({onBack}) {
 	const [error, setError] = useState('');
+	const navigate = useNavigate();
+	const [form, setForm] = useState({
+		description: '',
+		address: '',
+		deliveryTime: '',
+		ramp: '',
+		state: 'Formed',
+		createdById: 3,
+		warehouseOrderIds: [],
+		selectedDriver: null,
+		selectedTruck: null,
+		selectedDeliveryTime: null,
+		drivers: [],
+		trucks: [],
+		warehouseOrders: [],
+	});
 
-	// 11. selectWarehouseOrder() ir 12. chooseWarehouseOrder()
-	const selectWarehouseOrder = (orderId) => {
-		const isSelected = form.warehouseOrderIds.includes(orderId);
-		const updated = isSelected
-			? form.warehouseOrderIds.filter((id) => id !== orderId)
-			: [...form.warehouseOrderIds, orderId];
+	useEffect(() => {
+		const provideForm = async () => {
+			try {
+				const response = await fetch(`/api/transportationorderform`);
+				if (!response.ok) throw new Error('Tinklo klaida');
 
-		setForm((prev) => ({ ...prev, warehouseOrderIds: updated }));
-	};
+				const data = await response.json();
+				const { drivers, trucks, warehouseOrders } = data;
+
+				setForm((prev) => ({ ...prev, drivers, trucks, warehouseOrders }));
+			} catch {
+				Swal.fire('Klaida', 'Nepavyko užkrauti formos duomenų', 'error');
+			}
+		};
+
+		provideForm();
+	}, []);
 
 	// 13. chooseDriver()
 	const chooseDriver = (e) => {
@@ -30,44 +55,22 @@ function CreateTransportationOrder({ form, setForm, onBack }) {
 		setForm((prev) => ({ ...prev, selectedTruck: selected || null }));
 	};
 
-	// 15. checkFormedTransportationOrder()
-	const checkFormedTransportationOrder = () => {
-		if (form.warehouseOrderIds.length === 0) {
-			setError('Pasirinkite bent vieną sandėlio užsakymą.');
-			return false;
-		}
-		if (!form.address) {
-			setError('Adresas yra privalomas.');
-			return false;
-		}
-		if (!form.deliveryTime) {
-			setError('Pristatymo laikas yra privalomas.');
-			return false;
-		}
-		if (!form.selectedDriver) {
-			setError('Pasirinkite vairuotoją.');
-			return false;
-		}
-		if (!form.selectedTruck) {
-			setError('Pasirinkite sunkvežimį.');
-			return false;
-		}
-		setError('');
-		return true;
+	const selectWarehouseOrder = (orderId) => {
+		const isSelected = form.warehouseOrderIds.includes(orderId);
+		const updated = isSelected
+			? form.warehouseOrderIds.filter((id) => id !== orderId)
+			: [...form.warehouseOrderIds, orderId];
+
+		setForm((prev) => ({ ...prev, warehouseOrderIds: updated }));
 	};
 
-	// 16. createTransportationOrder() (siuntimas į serverį)
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		if (!checkFormedTransportationOrder()) {
-			return;
-		}
 
 		const body = {
 			description: form.description,
 			address: form.address,
-			deliveryTime: form.deliveryTime || null,
+			deliveryTime: form.deliveryTime || new Date().toISOString().split('T')[0] + 'T00:00:00',
 			state: form.state,
 			isCancelled: false,
 			isCompleted: false,
@@ -81,7 +84,7 @@ function CreateTransportationOrder({ form, setForm, onBack }) {
 		console.log('Siunčiami duomenys:', body);
 
 		try {
-			const response = await fetch('/api/transportationorder', {
+			const response = await fetch('/api/transportationorderform', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(body),
@@ -96,16 +99,12 @@ function CreateTransportationOrder({ form, setForm, onBack }) {
 				// Palaukus 2 sekundes, grįžti atgal
 				setTimeout(() => {
 					// Grįžtame atgal į ankstesnį puslapį
-					onBack();
-
-					// // Galite atlikti papildomą sėkmės apdorojimą, jei reikia
-					// if (typeof onSuccess === "function") {
-					//   onSuccess(selectedTime);
-					// }
+					navigate(-1);
 				}, 2000); // 2000 ms (2 sekundės) – tiek laiko rodomas sėkmės pranešimas
 			} else {
 				const errText = await response.text();
 				console.error('Klaida:', errText);
+				setError(errText);
 				// 22. error()
 				Swal.fire('❌ Klaida', 'Nepavyko sukurti pervežimo užsakymo: ' + errText, 'error');
 			}
@@ -142,7 +141,7 @@ function CreateTransportationOrder({ form, setForm, onBack }) {
 					initialFocus
 				/>
 
-				<Select value={form.state} onValueChange={(e) => setForm((prev) => ({ ...prev, state: e.target.value }))}>
+				{/* <Select value={form.state} onValueChange={(e) => setForm((prev) => ({ ...prev, state: e.target.value }))}>
 					<SelectTrigger>
 						<SelectValue placeholder='Pasirink būseną' />
 					</SelectTrigger>
@@ -153,7 +152,7 @@ function CreateTransportationOrder({ form, setForm, onBack }) {
 						<SelectItem value='Completed'>Įvykdytas</SelectItem>
 						<SelectItem value='Cancelled'>Atšauktas</SelectItem>
 					</SelectContent>
-				</Select>
+				</Select> */}
 
 				{/* Vairuotojas */}
 				<div>

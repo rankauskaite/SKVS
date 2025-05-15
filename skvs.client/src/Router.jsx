@@ -11,7 +11,7 @@ import HomePage from './pages/HomePage';
 import OldPage from './pages/OldPage';
 import Routes from './pages/Routes';
 
-export default function App() {
+export default function Router() {
 	return (
 		<RouterRoutes>
 			<Route element={<Layout />}>

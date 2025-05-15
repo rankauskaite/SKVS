@@ -1,4 +1,5 @@
 using SKVS.Server.Models;
+using static SKVS.Server.Controllers.DeliveryTimeManagementController;
 
 namespace SKVS.Server.Repository
 {
@@ -7,7 +8,7 @@ namespace SKVS.Server.Repository
         Task<IEnumerable<TransportationOrder>> GetAllAsync();
         Task<TransportationOrder?> GetByIdAsync(int id);
 
-        Task UpdateOrderDeliveryInformation(int id, DateTime deliveryTime, int ramp);
+        Task UpdateOrderDeliveryInformation(int id, DeliveryTimeUpdateModel deliveryTime);
         Task CancelOrderDelivery(int id);
         Task AddAsync(TransportationOrder order);
         Task UpdateAsync(TransportationOrder order);
