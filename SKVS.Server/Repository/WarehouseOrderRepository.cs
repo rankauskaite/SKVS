@@ -21,6 +21,13 @@ namespace SKVS.Server.Repository
             return await _context.WarehouseOrders.Include(x => x.Client).ToListAsync();
         }
 
+        public async Task<IEnumerable<WarehouseOrder>> GetAllSelectedAsync(List<int> orderIds)
+        {
+            return await _context.WarehouseOrders
+                .Where(x => orderIds.Contains(x.Id))
+                .ToListAsync();
+        }
+
         public async Task<WarehouseOrder?> GetByIdAsync(int id)
         {
             var order = await _context.WarehouseOrders.Include(x => x.Client).FirstOrDefaultAsync(x => x.Id == id);

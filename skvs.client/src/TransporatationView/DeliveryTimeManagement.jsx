@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import { Button } from '@/components/ui/button';
 
-function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
+function DeliveryTimeManagement({ orderId, orderDate, onBack, onSuccess }) {
 	const [times, setTimes] = useState([]);
 	const [selectedTime, setSelectedTime] = useState(null);
-	const [id, setId] = useState(null);
+	const [id, setTimeId] = useState(null);
 	const [error, setError] = useState(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const provideReservationTimes = async () => {
@@ -68,12 +70,7 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
 			// Palaukus 2 sekundes, grįžti atgal
 			setTimeout(() => {
 				// Grįžtame atgal į ankstesnį puslapį
-				onBack();
-
-				// // Galite atlikti papildomą sėkmės apdorojimą, jei reikia
-				// if (typeof onSuccess === "function") {
-				//   onSuccess(selectedTime);
-				// }
+				navigate(-1);
 			}, 2000); // 2000 ms (2 sekundės) – tiek laiko rodomas sėkmės pranešimas
 		} catch (error) {
 			console.error('❌ Klaida siunčiant laiką:', error);
@@ -104,7 +101,7 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
 									value={t.id}
 									onChange={() => {
 										setSelectedTime(t);
-										setId(t.id);
+										setTimeId(t.id);
 									}}
 									className='mr-2'
 								/>
@@ -125,4 +122,4 @@ function SelectDeliveryTimePage({ orderId, orderDate, onBack, onSuccess }) {
 	);
 }
 
-export default SelectDeliveryTimePage;
+export default DeliveryTimeManagement;

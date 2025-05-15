@@ -11,6 +11,7 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 
 	const navigate = useNavigate();
 
+	//RODYTI UŽSAKYMŲ SĄRAŠĄ
 	useEffect(() => {
 		const initiateTransportationOrdersView = async () => {
 			try {
@@ -30,19 +31,23 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 		initiateTransportationOrdersView();
 	}, [actor, actorId]);
 
+	//SUDARYTI NAUJĄ UŽSAKYMĄ
 	const initiateTransportationOrderCreation = () => {
 		navigate(Routes.createTransportationOrder);
 	};
 
+	//PRISKIRTI ATVYKIMO LAIKĄ
 	const initiateTimeReservation = (orderId) => {
 		navigate(Routes.selectTime(orderId));
 	};
 
+	//KEISTI ATVYKIMO LAIKĄ
 	const initiateTimeChange = (orderId) => {
 		navigate(Routes.selectTime(orderId));
 	};
 
-	const confirmCancellation = async (orderId) => {
+	//ATŠAUKTI ATVYKIMO LAIKĄ
+	const initiateTimeCancellation = async (orderId) => {
 		const confirm = await Swal.fire({
 			title: 'Ar tikrai norite atšaukti rezervaciją?',
 			icon: 'warning',
@@ -59,9 +64,11 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 			if (res.ok) {
 				Swal.fire('✅ Atšaukta', 'Rezervacija sėkmingai atšaukta', 'success');
 
-				setOrders((prev) =>
-					prev.map((order) => (order.orderId === orderId ? { ...order, deliveryTime: null, ramp: null } : order))
-				);
+				setTimeout(() => {
+				// Grįžtame atgal į ankstesnį puslapį
+				window.location.reload();
+			}, 2000);
+				
 			} else {
 				Swal.fire('❌ Klaida', 'Nepavyko atšaukti rezervacijos', 'error');
 			}
@@ -161,7 +168,7 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 									) : (
 										<>
 											<Button onClick={() => initiateTimeChange(order.orderId)}>✏️ Keisti laiką</Button>
-											<Button onClick={() => confirmCancellation(order.orderId)}>❌ Atšaukti laiką</Button>
+											<Button onClick={() => initiateTimeCancellation(order.orderId)}>❌ Atšaukti laiką</Button>
 										</>
 									)}
 								</TableCell>

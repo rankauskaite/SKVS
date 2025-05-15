@@ -9,7 +9,7 @@ export default function TruckCompanyPage() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const driversRes = await fetch('/api/drivers');
+				const driversRes = await fetch('/api/transportationorder/drivers');
 				const ordersRes = await fetch('/api/transportationorder');
 
 				if (!driversRes.ok || !ordersRes.ok) throw new Error();
