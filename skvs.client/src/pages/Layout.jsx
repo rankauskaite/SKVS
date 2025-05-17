@@ -18,7 +18,7 @@ function Layout() {
 						flexDirection: 'column',
 						justifyContent: 'center',
 					}}
-					className='dark bg-background text-foreground min-h-screen pt-5'
+					className='dark bg-background text-foreground min-h-screen pt-10'
 				>
 					<Outlet />
 				</div>

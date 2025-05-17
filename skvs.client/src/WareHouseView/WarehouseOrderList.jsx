@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
-const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
+const WarehouseOrderList = () => {
 	const [truckingSelection, setTruckingSelection] = useState({});
 	const [truckingCompanies, setTruckingCompanies] = useState([]);
 	const [warehouseOrders, setOrders] = useState([]);
@@ -15,33 +15,32 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const initiateTransportationOrdersView = async () => {
+		const retrieveWarehouseOrderList = async () => {
 			try {
-				// Jei aktorius yra "driver", pridedame vairuotojo ID į užklausą
-				const url = '/api/warehouseorder';
-
-				const res = await fetch(url);
-				if (!res.ok) throw new Error('Nepavyko gauti užsakymų');
-				const data = await res.json();
+				const getWarehouseOrders = await fetch('/api/warehouseorder');
+				if (!getWarehouseOrders.ok) throw new Error('Nepavyko gauti užsakymų');
+				const data = await getWarehouseOrders.json();
 				setOrders(data);
 			} catch (err) {
-				console.error('❌ Klaida gaunant užsakymus:', err);
 				Swal.fire('Klaida', 'Nepavyko užkrauti užsakymų', 'error');
 			}
 		};
 
-		initiateTransportationOrdersView();
+		retrieveWarehouseOrderList();
 	}, []); // Kai pasikeičia actor ar driverId, iš naujo užkraunami duomenys
 
 	useEffect(() => {
-		const fetchCompanies = async () => {
-			const res = await fetch('/api/warehouseorder/truckingcompanies');
-			if (res.ok) {
-				const data = await res.json();
+		const retrieveListOfTruckingCompanies = async () => {
+			try {
+				const getTruckingCompanyList = await fetch('/api/warehouseorder/truckingcompanies');
+				if (!getTruckingCompanyList.ok) throw new Error('Nepavyko gauti pervežimo įmonių');
+				const data = await getTruckingCompanyList.json();
 				setTruckingCompanies(data);
+			} catch (err) {
+				Swal.fire('Klaida', 'Nepavyko gauti pervežimo įmonių', 'error');
 			}
 		};
-		fetchCompanies();
+		retrieveListOfTruckingCompanies();
 	}, []);
 
 	const handleCancel = async (orderId) => {
@@ -60,14 +59,13 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 
 			if (res.ok) {
 				Swal.fire('✅ Atšaukta', 'Užsakymas sėkmingai atšauktas', 'success');
-				setWarehouseOrders((prev) => prev.filter((order) => order.id !== orderId));
 			} else {
 				Swal.fire('❌ Klaida', 'Nepavyko atšaukti užsakymo', 'error');
 			}
 		}
 	};
 
-	const handleSetTruckingCompany = async (orderId) => {
+	const selectTruckingCompany = async (orderId) => {
 		const selectedName = truckingSelection[orderId];
 		const selectedCompany = selectedName
 			? truckingCompanies.find((company) => company.truckingCompanyName === selectedName)
@@ -78,13 +76,13 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 			return;
 		}
 
-		const res = await fetch(`/api/warehouseorder/${orderId}/settruckingcompany`, {
+		const setSelectedTruckingCompany = await fetch(`/api/warehouseorder/${orderId}/settruckingcompany`, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ userId: selectedCompany ? selectedCompany.userId : null }),
 		});
 
-		if (res.ok) {
+		if (setSelectedTruckingCompany.ok) {
 			Swal.fire(
 				'✅ Pavyko',
 				selectedName ? 'Transporto įmonė priskirta sėkmingai' : 'Transporto įmonė pašalinta',
@@ -176,12 +174,11 @@ const WarehouseOrderList = ({ onNavigate, setWarehouseOrders, onBack }) => {
 										</SelectContent>
 									</Select>
 
-									<Button onClick={() => handleSetTruckingCompany(order.id)}>💼 Priskirti</Button>
+									<Button onClick={() => selectTruckingCompany(order.id)}>💼 Priskirti</Button>
 								</div>
 							</TableCell>
 							<TableCell>
 								<div className='flex flex-col gap-2'>
-									<Button onClick={() => {}}>✏️ Redaguoti užsakymą</Button>
 									<Button onClick={() => navigate(Routes.checkWarehouseOrder(order.id))}>🔎 Patikrinti krovinį</Button>
 									<Button onClick={() => handleCancel(order.id)}>❌ Atšaukti užsakymą</Button>
 								</div>

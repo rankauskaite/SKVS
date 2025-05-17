@@ -18,21 +18,21 @@ namespace SKVS.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetWarehouseOrders()
         {
             var orders = await _repository.GetAllAsync();
             return Ok(orders);
         }
 
         [HttpGet("truckingcompanies")]
-        public async Task<IActionResult> GetTruckingCompanies()
+        public async Task<IActionResult> GetTruckingCompanyList()
         {
             var truckingCompanies = await _repositoryTruckingCompanyManager.GetAllAsync();
             return Ok(truckingCompanies);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetChosenWarehouseOrder(int id)
         {
             var order = await _repository.GetByIdAsync(id);
             if (order == null) return NotFound();
@@ -43,7 +43,7 @@ namespace SKVS.Server.Controllers
         public async Task<IActionResult> Post(WarehouseOrder order)
         {
             await _repository.AddAsync(order);
-            return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
+            return CreatedAtAction(nameof(GetChosenWarehouseOrder), new { id = order.Id }, order);
         }
 
         [HttpPut("{id}")]
