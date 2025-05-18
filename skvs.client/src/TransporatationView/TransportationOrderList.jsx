@@ -65,10 +65,9 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 				Swal.fire('✅ Atšaukta', 'Rezervacija sėkmingai atšaukta', 'success');
 
 				setTimeout(() => {
-				// Grįžtame atgal į ankstesnį puslapį
-				window.location.reload();
-			}, 2000);
-				
+					// Grįžtame atgal į ankstesnį puslapį
+					window.location.reload();
+				}, 2000);
 			} else {
 				Swal.fire('❌ Klaida', 'Nepavyko atšaukti rezervacijos', 'error');
 			}
@@ -98,7 +97,7 @@ const TransportationOrdersList = ({ actor, actorId, actors }) => {
 					` - vairuotojas ${actors.find((driver) => driver.userId === actorId)?.name || 'Nėra pasirinktas'}`}
 			</h2>
 			{actor !== 'driver' && (
-				<div className='mt-4 flex gap-4'>
+				<div className='mb-6 flex gap-4'>
 					<Button onClick={initiateTransportationOrderCreation}>➕ Naujas pervežimo užsakymas</Button>
 				</div>
 			)}

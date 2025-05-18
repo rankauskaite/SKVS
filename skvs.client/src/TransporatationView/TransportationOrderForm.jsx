@@ -5,8 +5,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
 
-function CreateTransportationOrder({onBack}) {
+function CreateTransportationOrder({ onBack }) {
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
 	const [form, setForm] = useState({
@@ -119,28 +120,29 @@ function CreateTransportationOrder({onBack}) {
 		<div className='p-4'>
 			<h2 className='text-xl font-bold mb-4'>➕ Naujas pervežimo užsakymas</h2>
 			<form onSubmit={handleSubmit} className='space-y-3'>
-				<input
+				<Input
 					placeholder='Aprašymas'
 					value={form.description}
 					onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
 				/>
-				<input
+				<Input
 					placeholder='Adresas'
 					value={form.address}
 					onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
 				/>
-				<Calendar
-					mode='single'
-					selected={form.deliveryTime}
-					onSelect={(date) =>
-						setForm((prev) => ({
-							...prev,
-							deliveryTime: date,
-						}))
-					}
-					initialFocus
-				/>
-
+				<div className='flex justify-center'>
+					<Calendar
+						mode='single'
+						selected={form.deliveryTime}
+						onSelect={(date) =>
+							setForm((prev) => ({
+								...prev,
+								deliveryTime: date,
+							}))
+						}
+						initialFocus
+					/>
+				</div>
 				{/* <Select value={form.state} onValueChange={(e) => setForm((prev) => ({ ...prev, state: e.target.value }))}>
 					<SelectTrigger>
 						<SelectValue placeholder='Pasirink būseną' />

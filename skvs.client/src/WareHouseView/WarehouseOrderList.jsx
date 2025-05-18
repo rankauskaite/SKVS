@@ -94,18 +94,18 @@ const WarehouseOrderList = () => {
 	};
 
 	useEffect(() => {
-		const initialSelection = {};
+		const truckingCompaniesSelection = {};
 		warehouseOrders.forEach((order) => {
 			if (order.truckingCompanyUserId) {
 				const company = truckingCompanies.find((company) => company.userId === order.truckingCompanyUserId);
 				if (company) {
-					initialSelection[order.id] = company.truckingCompanyName;
+					truckingCompaniesSelection[order.id] = company.truckingCompanyName;
 				}
 			} else {
-				initialSelection[order.id] = '';
+				truckingCompaniesSelection[order.id] = '';
 			}
 		});
-		setTruckingSelection(initialSelection);
+		setTruckingSelection(truckingCompaniesSelection);
 	}, [warehouseOrders, truckingCompanies]);
 
 	if (warehouseOrders.length === 0) {
@@ -119,7 +119,7 @@ const WarehouseOrderList = () => {
 	return (
 		<div className='full-page-center'>
 			<h2 className='table-title'>Sandėlio užsakymai</h2>
-			<div className='mt-4 flex gap-4'>
+			<div className='mb-6 flex gap-4'>
 				<Button onClick={() => navigate(Routes.createWarehouseOrder)}>📦 Naujas sandėlio užsakymas</Button>
 			</div>
 			<Table>
