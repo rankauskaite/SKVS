@@ -4,17 +4,9 @@ import WarehouseOrder from '../WareHouseView/WarehouseOrder';
 
 export default function CheckOrderValidityPage() {
 	const { warehouseOrderId } = useParams();
-	const [order, setOrder] = useState(null);
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		fetch(`/api/warehouseorder/${warehouseOrderId}`)
-			.then((res) => res.json())
-			.then(setOrder)
-			.catch((err) => console.error(err));
-	}, [warehouseOrderId]);
+	if (!warehouseOrderId) return <div>Kraunama...</div>;
 
-	if (!order) return <div>Kraunama...</div>;
-
-	return <WarehouseOrder order={order} onBack={() => navigate(-1)} />;
+	return <WarehouseOrder Id={warehouseOrderId} onBack={() => navigate(-1)} />;
 }

@@ -64,7 +64,10 @@ const WarehouseOrderList = () => {
 			}
 		}
 	};
-
+	//PRADĖTI UŽSAKYMO PATIKRINIMĄ
+	const initiateOrderCheck = (orderId) => {
+		navigate(Routes.checkWarehouseOrder(orderId));
+	};
 	const selectTruckingCompany = async (orderId) => {
 		const selectedName = truckingSelection[orderId];
 		const selectedCompany = selectedName
@@ -179,7 +182,7 @@ const WarehouseOrderList = () => {
 							</TableCell>
 							<TableCell>
 								<div className='flex flex-col gap-2'>
-									<Button onClick={() => navigate(Routes.checkWarehouseOrder(order.id))}>🔎 Patikrinti krovinį</Button>
+									<Button onClick={() => initiateOrderCheck(order.id)}>🔎 Patikrinti krovinį</Button>
 									<Button onClick={() => handleCancel(order.id)}>❌ Atšaukti užsakymą</Button>
 								</div>
 							</TableCell>

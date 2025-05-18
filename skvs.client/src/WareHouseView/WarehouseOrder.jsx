@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
-function CheckOrderValidity({ order, onBack }) {
+function CheckOrderValidity({ Id, onBack }) {
 	const [inputCount, setInputCount] = useState('');
 	const [inputWeight, setInputWeight] = useState('');
 	const [orderInfo, setOrderInfo] = useState({
@@ -15,17 +15,26 @@ function CheckOrderValidity({ order, onBack }) {
 	const [validationResult, setValidationResult] = useState('');
 
 	useEffect(() => {
-		if (order) {
-			setOrderInfo({
-				orderID: order.orderID || '',
-				orderDate: order.orderDate?.substring(0, 10) || '',
-				deliveryDate: order.deliveryDate?.substring(0, 10) || '',
-				clientId: order.clientId || '',
-				count: order.count || '',
-				weight: order.weight || '',
-			});
-		}
-	}, [order]);
+		const updateOrderInfo = async () => {
+			try {
+				const res = await fetch(`/api/warehouseorder/${Id}`);
+				if (!res.ok) throw new Error('Nepavyko gauti užsakymo informacijos');
+
+				const data = await res.json();
+				setOrderInfo({
+					orderID: data.orderID || '',
+					orderDate: data.orderDate?.substring(0, 10) || '',
+					deliveryDate: data.deliveryDate?.substring(0, 10) || '',
+					clientId: data.clientId || '',
+					count: data.count || '',
+					weight: data.weight || '',
+				});
+			} catch (err) {
+				console.error('❌ Klaida gaunant užsakymo informaciją:', err);
+			}
+		};
+		updateOrderInfo();
+	}, [Id]);
 
 	const handleCheck = (e) => {
 		e.preventDefault();
